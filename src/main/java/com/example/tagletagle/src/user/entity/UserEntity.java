@@ -26,7 +26,7 @@ public class UserEntity extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "user_id")
+	@Column(name = "id")
 	private Long id;
 
 	//사용자의 고유 아이디: 소셜 이름 + _ + 고유 토큰 ex)google_19201999
@@ -60,5 +60,15 @@ public class UserEntity extends BaseEntity {
 
 	@Column(name = "following_count", nullable = false)
 	private Long followingCount;
+
+
+	/**비즈니스 로직 **/
+	public UserEntity(String username, String role){
+		this.username = username;
+		this.role = role;
+		this.followerCount = 0L;
+		this.followingCount = 0L;
+	}
+
 
 }
