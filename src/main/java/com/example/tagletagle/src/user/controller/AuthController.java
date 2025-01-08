@@ -3,6 +3,11 @@ package com.example.tagletagle.src.user.controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.tagletagle.base.BaseException;
+import com.example.tagletagle.base.BaseResponse;
+import com.example.tagletagle.base.BaseResponseStatus;
+import com.example.tagletagle.utils.SecurityUtil;
+
 @RestController
 public class AuthController {
 /*
@@ -17,8 +22,15 @@ public class AuthController {
 	}*/
 
 	@GetMapping("/social/login")
-	public String testSocialLogin(){
-		return "성공";
+	public Long testSocialLogin(){
+		try{
+			Long userId = SecurityUtil.getCurrentUserId()
+				.orElseThrow(() -> new BaseException(BaseResponseStatus.REQUIRED_LOGIN));
+
+			return userId;
+		}catch (BaseException e){
+			return -1L;
+		}
 	}
 
 	@GetMapping("/social")
