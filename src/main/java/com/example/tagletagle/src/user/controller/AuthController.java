@@ -16,7 +16,15 @@ public class AuthController {
 		return "성공";
 	}*/
 
+	@GetMapping("/social/login")
+	public String testSocialLogin(){
+		return "성공";
+	}
 
+	@GetMapping("/social")
+	public String testSecurityConfig(){
+		return "성공 security";
+	}
 
 
 }

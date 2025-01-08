@@ -7,8 +7,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.example.tagletagle.base.BaseException;
+import com.example.tagletagle.base.BaseResponse;
+import com.example.tagletagle.base.BaseResponseStatus;
 import com.example.tagletagle.oauth.dto.CustomOAuth2User;
 import com.example.tagletagle.oauth.dto.OAuth2UserDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -32,9 +36,19 @@ public class JWTFilter extends OncePerRequestFilter {
 		//cookie들을 불러온 뒤 Authorization Key에 담긴 쿠키를 찾음
 		String authorization = null;
 		Cookie[] cookies = request.getCookies();
+
+		//토큰이 없는 경우
+		if (cookies == null) {
+			System.out.println("token null");
+			//filterChain.doFilter(request, response);
+
+			handleException(response, new BaseException(BaseResponseStatus.NO_EXIST_TOKEN));
+			//조건이 해당되면 메소드 종료 (필수)
+			return;
+		}
+
 		for (Cookie cookie : cookies) {
 
-			System.out.println(cookie.getName());
 			if (cookie.getName().equals("Authorization")) {
 
 				authorization = cookie.getValue();
@@ -43,10 +57,10 @@ public class JWTFilter extends OncePerRequestFilter {
 
 		//Authorization 헤더 검증
 		if (authorization == null) {
-
 			System.out.println("token null");
-			filterChain.doFilter(request, response);
+			//filterChain.doFilter(request, response);
 
+			handleException(response, new BaseException(BaseResponseStatus.NO_EXIST_TOKEN));
 			//조건이 해당되면 메소드 종료 (필수)
 			return;
 		}
@@ -54,15 +68,31 @@ public class JWTFilter extends OncePerRequestFilter {
 		//토큰
 		String token = authorization;
 
-		//토큰 소멸 시간 검증
-		if (jwtUtil.isExpired(token)) {
+		//토큰 소멸 시간 검증 + 토큰 유효성 검사
+		try {
+			if (jwtUtil.isExpired(token)) {
 
+				System.out.println("token expired");
+				//filterChain.doFilter(request, response);
+				handleException(response, new BaseException(BaseResponseStatus.EXPIRED_TOKEN));
+				//조건이 해당되면 메소드 종료 (필수)
+				return;
+			}
+		}catch (io.jsonwebtoken.security.SignatureException e){
+			handleException(response, new BaseException(BaseResponseStatus.INVALID_TOKEN));
+			return;
+		}catch (io.jsonwebtoken.MalformedJwtException e){
+			handleException(response, new BaseException(BaseResponseStatus.INVALID_TOKEN));
+			return;
+		}catch (io.jsonwebtoken.ExpiredJwtException e){
 			System.out.println("token expired");
-			filterChain.doFilter(request, response);
-
+			//filterChain.doFilter(request, response);
+			handleException(response, new BaseException(BaseResponseStatus.EXPIRED_TOKEN));
 			//조건이 해당되면 메소드 종료 (필수)
 			return;
+
 		}
+
 
 		//토큰에서 username과 role 획득
 		String username = jwtUtil.getUsername(token);
@@ -85,4 +115,22 @@ public class JWTFilter extends OncePerRequestFilter {
 
 		filterChain.doFilter(request, response);
 	}
+
+	private void handleException(HttpServletResponse response, BaseException e) throws IOException {
+		// HTTP 상태 코드 설정
+		response.setStatus(HttpServletResponse.SC_OK); // 또는 e.getStatusCode()
+		response.setContentType("application/json");
+		response.setCharacterEncoding("UTF-8");
+
+		// BaseResponse 형태의 에러 응답 작성
+		BaseResponse<BaseResponseStatus> errorResponse = new BaseResponse<>(e.getStatus());
+		ObjectMapper objectMapper = new ObjectMapper();
+		String jsonResponse = objectMapper.writeValueAsString(errorResponse);
+
+		// 응답 출력
+		response.getWriter().write(jsonResponse);
+		response.getWriter().flush();
+	}
+
 }
+

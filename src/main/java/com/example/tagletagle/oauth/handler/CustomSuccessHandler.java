@@ -38,7 +38,9 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		GrantedAuthority auth = iterator.next();
 		String role = auth.getAuthority();
 
-		String token = jwtUtil.createJwt(username, userId, role, 60*60*60L);
+		String token = jwtUtil.createJwt(username, userId, role, 60*60*24*1000L);
+		System.out.println(token);
+
 
 		response.addCookie(createCookie("Authorization", token));
 
@@ -49,7 +51,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 	private Cookie createCookie(String key, String value) {
 
 		Cookie cookie = new Cookie(key, value);
-		cookie.setMaxAge(60*60*60);
+		cookie.setMaxAge(60*60*24);
 		//cookie.setSecure(true);
 		cookie.setPath("/");
 		cookie.setHttpOnly(true);

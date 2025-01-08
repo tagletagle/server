@@ -30,7 +30,10 @@ public enum BaseResponseStatus {
 	/**
 	 * 5000 : global
 	 */
-	DATA_CONFLICT(false, 5000, "데이터 충돌로 업데이트 실패");
+	DATA_CONFLICT(false, 5000, "데이터 충돌로 업데이트 실패"),
+	NO_EXIST_TOKEN(false,5100, "토큰이 존재하지 않습니다"),
+	EXPIRED_TOKEN(false, 5110, "토큰 시간이 만료되었습니다"),
+	INVALID_TOKEN(false,5120, "토큰이 올바르지 않습니다");
 
 	private final boolean isSuccess;
 	private final int code;
