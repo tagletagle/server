@@ -4,13 +4,13 @@ import org.springframework.stereotype.Service;
 
 import com.example.tagletagle.src.board.repository.BoardRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class BoardService {
 
 	private final BoardRepository boardRepository;
 
-	public BoardService(BoardRepository boardRepository) {
-		this.boardRepository = boardRepository;
-	}
 
 }
