@@ -10,4 +10,6 @@ import com.example.tagletagle.src.user.entity.UserEntity;
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
 	Optional<UserEntity> findUserEntityByUsernameAndStatus(String username, Status status);
+
+	Optional<UserEntity> findUserEntityByIdAndStatus(Long userId, Status status);
 }
