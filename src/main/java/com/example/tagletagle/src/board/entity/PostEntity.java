@@ -3,6 +3,7 @@ package com.example.tagletagle.src.board.entity;
 import org.hibernate.annotations.DynamicInsert;
 
 import com.example.tagletagle.base.BaseEntity;
+import com.example.tagletagle.src.board.dto.CreatePostDTO;
 import com.example.tagletagle.src.user.entity.UserEntity;
 
 import jakarta.persistence.Column;
@@ -49,5 +50,15 @@ public class PostEntity extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	private UserEntity user;
+
+	public PostEntity(CreatePostDTO createPostDTO, UserEntity user){
+		this.title = createPostDTO.getTitle();
+		this.url = createPostDTO.getTitle();
+		this.commentCount = 0L;
+		this.likeCount = 0L;
+		this.scrapCount = 0L;
+		this.user = user;
+	}
+
 
 }

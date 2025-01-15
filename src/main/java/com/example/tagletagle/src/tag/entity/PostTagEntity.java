@@ -39,4 +39,9 @@ public class PostTagEntity extends BaseEntity {
 	@JoinColumn(name = "tag_id")
 	private TagEntity tag;
 
+	public PostTagEntity(PostEntity post, TagEntity tag){
+		this.post = post;
+		this.tag = tag;
+	}
+
 }
