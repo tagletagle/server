@@ -70,5 +70,17 @@ public class UserEntity extends BaseEntity {
 		this.followingCount = 0L;
 	}
 
+	public void increaseFollowerCount(){
+		this.followerCount = this.followerCount + 1L;
+	}
+	public void decreaseFollowerCount(){
+		this.followerCount = this.followerCount - 1L;
+	}
+	public void increaseFollowingCount(){
+		this.followingCount  = this.followingCount + 1L;
+	}
+	public void decreaseFollowingCount(){
+		this.followingCount = this.followingCount - 1L;
+	}
 
 }

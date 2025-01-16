@@ -38,4 +38,9 @@ public class FollowsEntity extends BaseEntity {
 	@JoinColumn(name = "following_id")
 	private UserEntity following;
 
+	public FollowsEntity(UserEntity follower, UserEntity following){
+		this.follower = follower;
+		this.following = following;
+	}
+
 }

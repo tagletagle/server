@@ -1,6 +1,8 @@
 package com.example.tagletagle.src.user.controller;
 
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,6 +32,22 @@ public class UserController {
 			userService.saveOrUpdateUserBasicInfo(userId, userBasicInfoDTO);
 
 			return new BaseResponse<>("기본정보가 입력되었습니다.");
+
+		}catch (BaseException e){
+			return new BaseResponse<>(e.getStatus());
+		}
+
+	}
+
+	@PatchMapping("/api/user/following/{following_user_id}")
+	public BaseResponse<String> followUser(@PathVariable("following_user_id")Long followingUserId){
+		try{
+			Long userId = SecurityUtil.getCurrentUserId()
+				.orElseThrow(() -> new BaseException(BaseResponseStatus.REQUIRED_LOGIN));
+
+			String comment = userService.followUser(userId, followingUserId);
+
+			return new BaseResponse<>(comment);
 
 		}catch (BaseException e){
 			return new BaseResponse<>(e.getStatus());
