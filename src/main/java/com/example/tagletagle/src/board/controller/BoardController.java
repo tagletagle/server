@@ -57,5 +57,21 @@ public class BoardController {
 
 	}
 
+	@GetMapping("/api/board/post/user/{author_id}/tag/{tag_name}")
+	public BaseResponse<PostsDTO> getPostsByUserWithTag(@PathVariable("author_id")Long authorId, @PathVariable("tag_name")String tagName){
+		try{
+			Long userId = SecurityUtil.getCurrentUserId()
+				.orElseThrow(() -> new BaseException(BaseResponseStatus.REQUIRED_LOGIN));
+
+			PostsDTO postsDTO = boardService.getPostsByUserWithTag(userId, authorId, tagName);
+
+			return new BaseResponse<>(postsDTO);
+
+		}catch (BaseException e){
+			return new BaseResponse<>(e.getStatus());
+		}
+
+	}
+
 
 }

@@ -82,4 +82,24 @@ public class BoardService {
 		return postsDTO;
 
 	}
+
+	public PostsDTO getPostsByUserWithTag(Long userId, Long authorId, String tagName) {
+		UserEntity user = userRepository.findUserEntityByIdAndStatus(userId, Status.ACTIVE)
+			.orElseThrow(()->new BaseException(BaseResponseStatus.USER_NO_EXIST));
+
+		UserEntity author = userRepository.findUserEntityByIdAndStatus(userId, Status.ACTIVE)
+			.orElseThrow(()->new BaseException(BaseResponseStatus.AUTHOR_NO_EXIST));
+
+		PostsDTO postsDTO = new PostsDTO();
+		List<PostInfoDTO> postInfoDTOList = boardRepository.findPostsByAuthorAndUserWithTag(authorId, userId, tagName);
+		if(postInfoDTOList.size() == 0){
+			return postsDTO;
+		}
+
+
+		postsDTO.setPostInfoDTOList(postInfoDTOList);
+
+		return postsDTO;
+
+	}
 }
