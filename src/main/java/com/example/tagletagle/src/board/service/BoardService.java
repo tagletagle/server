@@ -9,6 +9,8 @@ import com.example.tagletagle.base.BaseException;
 import com.example.tagletagle.base.BaseResponseStatus;
 import com.example.tagletagle.config.Status;
 import com.example.tagletagle.src.board.dto.CreatePostDTO;
+import com.example.tagletagle.src.board.dto.PostInfoDTO;
+import com.example.tagletagle.src.board.dto.PostsDTO;
 import com.example.tagletagle.src.board.entity.PostEntity;
 import com.example.tagletagle.src.board.repository.BoardRepository;
 import com.example.tagletagle.src.board.repository.PostRepository;
@@ -56,6 +58,28 @@ public class BoardService {
 		}
 
 		postTagRepository.saveAll(postTagEntityList);
+
+	}
+
+
+	public PostsDTO getPostsByUser(Long userId, Long authorId) {
+
+		UserEntity user = userRepository.findUserEntityByIdAndStatus(userId, Status.ACTIVE)
+			.orElseThrow(()->new BaseException(BaseResponseStatus.USER_NO_EXIST));
+
+		UserEntity author = userRepository.findUserEntityByIdAndStatus(userId, Status.ACTIVE)
+			.orElseThrow(()->new BaseException(BaseResponseStatus.AUTHOR_NO_EXIST));
+
+		PostsDTO postsDTO = new PostsDTO();
+		List<PostInfoDTO> postInfoDTOList = boardRepository.findPostsByAuthorAndUser(authorId, userId);
+		if(postInfoDTOList.size() == 0){
+			return postsDTO;
+		}
+
+
+		postsDTO.setPostInfoDTOList(postInfoDTOList);
+
+		return postsDTO;
 
 	}
 }

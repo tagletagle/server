@@ -19,6 +19,7 @@ public enum BaseResponseStatus {
 	 * 2000 : 임준현 에러
 	 */
 	USER_NO_EXIST(false, 2000, "유저가 존재하지 않습니다"),
+	AUTHOR_NO_EXIST(false, 2001, "게시글을 적은 유저가 존재하지 않습니다"),
 
 	/**
 	 * 3000 : 조윤재 에러

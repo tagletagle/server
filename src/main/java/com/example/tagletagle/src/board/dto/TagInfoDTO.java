@@ -1,7 +1,5 @@
 package com.example.tagletagle.src.board.dto;
 
-import java.util.List;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,14 +8,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Schema(description = "게시글 작성을 위한 DTO")
+@Schema(description = "태그 정보를 담은 DTO")
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreatePostDTO {
+public class TagInfoDTO {
 
-	private String title;
-	private String url;
-	private List<Long> tagIdList;
-
+	private Long tagId;
+	private String tagName;
 
 }

@@ -53,7 +53,7 @@ public class PostEntity extends BaseEntity {
 
 	public PostEntity(CreatePostDTO createPostDTO, UserEntity user){
 		this.title = createPostDTO.getTitle();
-		this.url = createPostDTO.getTitle();
+		this.url = createPostDTO.getUrl();
 		this.commentCount = 0L;
 		this.likeCount = 0L;
 		this.scrapCount = 0L;

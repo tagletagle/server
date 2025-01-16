@@ -10,14 +10,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Schema(description = "게시글 작성을 위한 DTO")
+@Schema(description = "게시글 리스트를 담은 DTO")
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreatePostDTO {
+public class PostsDTO {
 
-	private String title;
-	private String url;
-	private List<Long> tagIdList;
-
+	private List<PostInfoDTO> postInfoDTOList;
 
 }
