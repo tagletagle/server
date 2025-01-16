@@ -73,5 +73,22 @@ public class BoardController {
 
 	}
 
+	@PatchMapping("api/board/post/like/{post_id}")
+	public BaseResponse<String> likeOrUnLikePost(@PathVariable("post_id")Long postId){
+
+		try{
+			Long userId = SecurityUtil.getCurrentUserId()
+				.orElseThrow(() -> new BaseException(BaseResponseStatus.REQUIRED_LOGIN));
+
+			String comment = boardService.likeOrUnLikePost(userId, postId);
+
+			return new BaseResponse<>(comment);
+
+		}catch (BaseException e){
+			return new BaseResponse<>(e.getStatus());
+		}
+
+	}
+
 
 }

@@ -1,5 +1,6 @@
 package com.example.tagletagle.src.board.entity;
 
+import org.apache.catalina.User;
 import org.hibernate.annotations.DynamicInsert;
 
 import com.example.tagletagle.base.BaseEntity;
@@ -38,5 +39,10 @@ public class PostLikeEntity extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "post_id")
 	private PostEntity post;
+
+	public PostLikeEntity(PostEntity post, UserEntity user){
+		this.post = post;
+		this.user = user;
+	}
 
 }

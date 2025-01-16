@@ -31,4 +31,5 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
 	);*/
 
 
+	Optional<PostEntity> findPostEntityById(Long postId);
 }

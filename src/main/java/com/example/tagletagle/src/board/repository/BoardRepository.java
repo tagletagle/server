@@ -58,6 +58,9 @@ public class BoardRepository {
 					String tagIds = rs.getString("tagIds");
 					String tagNames = rs.getString("tagNames");
 
+					System.out.println("isLike :" + isLike);
+					System.out.println("isScrap :" + isScrap);
+
 					return new PostInfoDTO(postId, title, url, commentCount, likeCount, scrapCount, authorId, authorNickname, authorProfileImgUrl, isLike, isScrap,tagIds, tagNames);
 				}
 			},

@@ -49,7 +49,7 @@ public class PostInfoDTO {
 		System.out.println(isLike);
 		this.isLike = (isLike == null || isLike == 0) ? Boolean.FALSE : Boolean.TRUE;
 		System.out.println(isScrap);
-		this.isScrap = (isScrap == null || isLike == 0) ? Boolean.FALSE : Boolean.TRUE;
+		this.isScrap = (isScrap == null || isScrap == 0) ? Boolean.FALSE : Boolean.TRUE;
 		this.tagInfoDTOList = TagUtils.parseTags(tagIds, tagNames);
 	}
 }
