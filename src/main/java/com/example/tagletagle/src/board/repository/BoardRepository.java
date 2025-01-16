@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import com.example.tagletagle.src.board.dto.CommentInfoDTO;
 import com.example.tagletagle.src.board.dto.PostInfoDTO;
 
 @Repository
@@ -116,6 +117,41 @@ public class BoardRepository {
 
 		);
 		return postInfoDTOList;
+
+
+	}
+
+	public List<CommentInfoDTO> findCommentsByPost(Long postId) {
+
+		String sql =
+			"SELECT c.id AS commentId, " +
+				"       c.contents AS contents, " +
+				"       u.id AS authorId, " +
+				"       u.nickname AS authorNickname, " +
+				"       u.profile_img_url AS authorProfileImgUrl " +
+				"FROM comment c " +
+				"INNER JOIN user u ON c.user_id = u.id " +
+				"WHERE c.post_id = ?";
+
+
+
+		List<CommentInfoDTO> commentInfoDTOList = jdbcTemplate.query(sql,
+			new RowMapper<CommentInfoDTO>() {
+				@Override
+				public CommentInfoDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+					Long commentId = rs.getLong("commentId");
+					String contents = rs.getString("contents");
+					Long authorId = rs.getLong("authorId");
+					String authorNickname = rs.getString("authorNickname");
+					String authorProfileImgUrl = rs.getString("authorProfileImgUrl");
+
+					return new CommentInfoDTO(commentId, contents, authorId, authorNickname, authorProfileImgUrl);
+				}
+			},
+			postId
+
+		);
+		return commentInfoDTOList;
 
 
 	}

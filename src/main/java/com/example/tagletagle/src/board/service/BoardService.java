@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import com.example.tagletagle.base.BaseException;
 import com.example.tagletagle.base.BaseResponseStatus;
 import com.example.tagletagle.config.Status;
+import com.example.tagletagle.src.board.dto.CommentInfoDTO;
+import com.example.tagletagle.src.board.dto.CommentsDTO;
 import com.example.tagletagle.src.board.dto.CreatePostDTO;
 import com.example.tagletagle.src.board.dto.PostInfoDTO;
 import com.example.tagletagle.src.board.dto.PostsDTO;
@@ -162,6 +164,27 @@ public class BoardService {
 
 
 
+
+	}
+
+	public CommentsDTO getCommentListByPostId(Long userId, Long postId) {
+
+		UserEntity user = userRepository.findUserEntityByIdAndStatus(userId, Status.ACTIVE)
+			.orElseThrow(()->new BaseException(BaseResponseStatus.USER_NO_EXIST));
+
+		PostEntity post = postRepository.findPostEntityById(postId)
+			.orElseThrow(()->new BaseException(BaseResponseStatus.POST_NO_EXIST));
+
+		List<CommentInfoDTO> commentInfoDTOList = boardRepository.findCommentsByPost(postId);
+		CommentsDTO commentsDTO = new CommentsDTO();
+
+		if(commentInfoDTOList.size() == 0){
+			return commentsDTO;
+		}
+
+		commentsDTO.setCommentInfoDTOList(commentInfoDTOList);
+
+		return commentsDTO;
 
 	}
 }

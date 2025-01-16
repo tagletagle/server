@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.tagletagle.base.BaseException;
 import com.example.tagletagle.base.BaseResponse;
 import com.example.tagletagle.base.BaseResponseStatus;
+import com.example.tagletagle.src.board.dto.CommentsDTO;
 import com.example.tagletagle.src.board.dto.CreatePostDTO;
 import com.example.tagletagle.src.board.dto.PostsDTO;
 import com.example.tagletagle.src.board.service.BoardService;
@@ -105,6 +106,22 @@ public class BoardController {
 			return new BaseResponse<>(e.getStatus());
 		}
 
+	}
+
+	@GetMapping("api/board/comment/{post_id}")
+	public BaseResponse<CommentsDTO> getCommentListByPostId(@PathVariable("post_id")Long postId){
+
+		try{
+			Long userId = SecurityUtil.getCurrentUserId()
+				.orElseThrow(() -> new BaseException(BaseResponseStatus.REQUIRED_LOGIN));
+
+			CommentsDTO commentsDTO = boardService.getCommentListByPostId(userId, postId);
+
+			return new BaseResponse<>(commentsDTO);
+
+		}catch (BaseException e){
+			return new BaseResponse<>(e.getStatus());
+		}
 	}
 
 
