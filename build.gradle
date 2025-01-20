@@ -30,6 +30,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     //mustache
     implementation 'org.springframework.boot:spring-boot-starter-mustache'
+    //validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
     //oauth2
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     //spring security
