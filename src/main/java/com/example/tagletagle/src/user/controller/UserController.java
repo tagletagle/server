@@ -2,6 +2,7 @@ package com.example.tagletagle.src.user.controller;
 
 import org.springframework.web.bind.annotation.*;
 
+
 import com.example.tagletagle.base.BaseException;
 import com.example.tagletagle.base.BaseResponse;
 import com.example.tagletagle.base.BaseResponseStatus;
@@ -17,6 +18,18 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 
 	private final UserService userService;
+
+	@GetMapping("/api/user")
+	public boolean nicknameDupCheck(@Valid @RequestParam String nickname){
+		try{
+			return userService.nicknameDupCheck(nickname);
+
+
+		}catch (BaseException e) {
+			return false;
+		}
+
+	}
 
 
 	@PatchMapping("/api/user/basic/info")
@@ -48,20 +61,11 @@ public class UserController {
 		}catch (BaseException e){
 			return new BaseResponse<>(e.getStatus());
 		}
-	}
-
-
-	@GetMapping("/api/user/nickname/check")
-	public boolean nicknameDupCheck(@Valid @RequestParam String nickname){
-		try{
-			return userService.nicknameDupCheck(nickname);
-
-
-		}catch (BaseException e) {
-			return false;
-		}
 
 	}
+
+
+
 
 
 
