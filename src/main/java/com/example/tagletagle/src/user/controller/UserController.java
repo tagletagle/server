@@ -19,19 +19,6 @@ public class UserController {
 
 	private final UserService userService;
 
-	@GetMapping("/api/user")
-	public boolean nicknameDupCheck(@Valid @RequestParam String nickname){
-		try{
-			return userService.nicknameDupCheck(nickname);
-
-
-		}catch (BaseException e) {
-			return false;
-		}
-
-	}
-
-
 	@PatchMapping("/api/user/basic/info")
 	public BaseResponse<String> saveOrUpdateUserBasicInfo(@Valid @RequestBody UserBasicInfoDTO userBasicInfoDTO){
 		try{
@@ -64,10 +51,16 @@ public class UserController {
 
 	}
 
+	@GetMapping("/api/user")
+	public boolean nicknameDupCheck(@Valid @RequestParam String nickname){
+		try{
+			return userService.nicknameDupCheck(nickname);
 
 
+		}catch (BaseException e) {
+			return false;
+		}
 
-
-
+	}
 
 }
