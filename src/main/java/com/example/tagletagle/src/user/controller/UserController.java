@@ -1,5 +1,8 @@
 package com.example.tagletagle.src.user.controller;
 
+import com.example.tagletagle.src.user.dto.UserProfileResponseDTO;
+import com.example.tagletagle.src.user.entity.UserEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -61,6 +64,13 @@ public class UserController {
 			return false;
 		}
 
+	}
+
+	//사용자 프로필 조회
+	@GetMapping("/api/user/{userId}/profile")
+	public ResponseEntity<UserProfileResponseDTO> getUserProfile(@PathVariable Long userId){
+		UserProfileResponseDTO userProfile = userService.getUserProfile(userId);
+		return ResponseEntity.ok(userProfile);
 	}
 
 }
