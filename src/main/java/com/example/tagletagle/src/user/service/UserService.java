@@ -94,6 +94,8 @@ public class UserService {
 		followsDTO.setId((followsEntity.getId()));
 		followsDTO.setFollowerId(followsEntity.getFollower().getId());
 		followsDTO.setFollowingId(followsEntity.getFollowing().getId());
+		followsDTO.setFollowingNickname(followsEntity.getFollowing().getNickname());
+		followsDTO.setFollowingProfile(followsEntity.getFollowing().getProfileImgUrl());
 
 		return followsDTO;
 	}

@@ -13,5 +13,7 @@ public class FollowsDTO {
     private Long id;
     private Long followerId;
     private Long followingId;
+    private String followingNickname;
+    private String followingProfile;
 
 }

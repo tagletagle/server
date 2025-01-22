@@ -56,8 +56,8 @@ public class UserController {
 
 	}
 
-	@GetMapping("/api/user")
-	public boolean nicknameDupCheck(@Valid @RequestParam String nickname){
+	@GetMapping("/api/user/nickname/check/{nickname}")
+	public boolean nicknameDupCheck(@PathVariable String nickname){
 		try{
 			return userService.nicknameDupCheck(nickname);
 
@@ -68,8 +68,8 @@ public class UserController {
 
 	}
 
-	@GetMapping("/api/user/following")
-	public List<FollowsDTO> getFollowingList(@RequestParam Long follower){
+	@GetMapping("/api/user/following/{follower}")
+	public List<FollowsDTO> getFollowingList(@PathVariable Long follower){
 
 			return userService.getFollowingUsers(follower);
 
