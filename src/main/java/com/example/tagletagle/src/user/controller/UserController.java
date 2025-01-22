@@ -1,5 +1,7 @@
 package com.example.tagletagle.src.user.controller;
 
+import com.example.tagletagle.src.board.dto.PostsDTO;
+import com.example.tagletagle.src.user.dto.FollowsDTO;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -12,6 +14,9 @@ import com.example.tagletagle.utils.SecurityUtil;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -62,5 +67,14 @@ public class UserController {
 		}
 
 	}
+
+	@GetMapping("/api/user/following")
+	public List<FollowsDTO> getFollowingList(@RequestParam Long follower){
+
+			return userService.getFollowingUsers(follower);
+
+	}
+
+
 
 }

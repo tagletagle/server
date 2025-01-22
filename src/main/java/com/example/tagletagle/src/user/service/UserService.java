@@ -1,5 +1,7 @@
 package com.example.tagletagle.src.user.service;
 
+import com.example.tagletagle.src.tag.entity.TagEntity;
+import com.example.tagletagle.src.user.dto.FollowsDTO;
 import org.springframework.stereotype.Service;
 
 import com.example.tagletagle.base.BaseException;
@@ -13,6 +15,9 @@ import com.example.tagletagle.src.user.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -76,4 +81,21 @@ public class UserService {
 		return userRepository.existsUserEntityByNickname(nickname);
 
 	}
+
+	public List<FollowsDTO> getFollowingUsers(Long follower) {
+		return followsRepository.findFollowingByFollower(follower).stream()
+				.map(this::convertToFollowsDTO)
+				.collect(Collectors.toList());
+	}
+
+	private FollowsDTO convertToFollowsDTO(FollowsEntity followsEntity) {
+		FollowsDTO followsDTO = new FollowsDTO();
+
+		followsDTO.setId((followsEntity.getId()));
+		followsDTO.setFollowerId(followsEntity.getFollower().getId());
+		followsDTO.setFollowingId(followsEntity.getFollowing().getId());
+
+		return followsDTO;
+	}
+
 }
