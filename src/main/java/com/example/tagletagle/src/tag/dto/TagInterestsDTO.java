@@ -1,4 +1,4 @@
-package com.example.tagletagle.src.user.dto;
+package com.example.tagletagle.src.tag.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,10 +8,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 
-
-public class FollowsDTO {
+public class TagInterestsDTO {
     private Long id;
-    private Long followerId;
-    private Long followingId;
-
+    private Long userId;
+    private Long tagId;
 }
