@@ -53,9 +53,12 @@ public class BoardService {
 
 		List<Long> tagList = createPostDTO.getTagIdList();
 
+		if(createPostDTO.getUrl() == null){
+			throw new BaseException(BaseResponseStatus.MUST_SELECT_TAG);
+		}
+
 		if(tagList.size() == 0){
-			//예외 처리
-			return;
+			throw new BaseException(BaseResponseStatus.MUST_SELECT_TAG);
 		}
 
 		List<TagEntity> tagEntityList = tagRepository.findAllById(tagList);
@@ -91,7 +94,7 @@ public class BoardService {
 
 	}
 
-	public PostsDTO getPostsByUserWithTag(Long userId, Long authorId, String tagName) {
+	public PostsDTO getPostsByUserWithTag(Long userId, Long authorId, Long tagId) {
 		UserEntity user = userRepository.findUserEntityByIdAndStatus(userId, Status.ACTIVE)
 			.orElseThrow(()->new BaseException(BaseResponseStatus.USER_NO_EXIST));
 
@@ -99,8 +102,9 @@ public class BoardService {
 			.orElseThrow(()->new BaseException(BaseResponseStatus.AUTHOR_NO_EXIST));
 
 		PostsDTO postsDTO = new PostsDTO();
-		List<PostInfoDTO> postInfoDTOList = boardRepository.findPostsByAuthorAndUserWithTag(authorId, userId, tagName);
+		List<PostInfoDTO> postInfoDTOList = boardRepository.findPostsByAuthorAndUserWithTag(authorId, userId, tagId);
 		if(postInfoDTOList.size() == 0){
+			System.out.println("해당 태그로 작성한 글이 없습니다");
 			return postsDTO;
 		}
 
