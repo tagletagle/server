@@ -1,5 +1,7 @@
 package com.example.tagletagle.src.user.controller;
 
+import com.example.tagletagle.src.board.dto.PostsDTO;
+import com.example.tagletagle.src.user.dto.FollowsDTO;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -12,6 +14,9 @@ import com.example.tagletagle.utils.SecurityUtil;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -51,8 +56,8 @@ public class UserController {
 
 	}
 
-	@GetMapping("/api/user")
-	public boolean nicknameDupCheck(@Valid @RequestParam String nickname){
+	@GetMapping("/api/user/nickname/check/{nickname}")
+	public boolean nicknameDupCheck(@PathVariable String nickname){
 		try{
 			return userService.nicknameDupCheck(nickname);
 
@@ -62,5 +67,13 @@ public class UserController {
 		}
 
 	}
+
+	@GetMapping("/api/user/following/{follower}")
+	public List<FollowsDTO> getFollowingList(@PathVariable Long follower){
+
+			return userService.getFollowingUsers(follower);
+
+	}
+
 
 }
