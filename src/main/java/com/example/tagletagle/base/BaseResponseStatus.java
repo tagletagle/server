@@ -19,9 +19,13 @@ public enum BaseResponseStatus {
 	 * 2000 : 임준현 에러
 	 */
 	USER_NO_EXIST(false, 2000, "유저가 존재하지 않습니다"),
-	AUTHOR_NO_EXIST(false, 2001, "게시글을 적은 유저가 존재하지 않습니다"),
+	AUTHOR_NO_EXIST(false, 2001, "저자가 존재하지 않습니다"),
 
 	POST_NO_EXIST(false, 2100, "게시글이 존재하지 않습니다"),
+	MUST_WRITE_URL(false, 2105, "게시글 작성 시 url 작성은 필수입니다"),
+	MUST_SELECT_TAG(false, 2110, "게시글 작성 시 태그 선택은 필수입니다"),
+	NO_VALID_LOGINDTO(false, 2200, "로그인에 실패했습니다"),
+	FAILED_LOGIN(false, 2205, "로그인 파라미터 값이 올바르지 않습니다"),
 
 	/**
 	 * 3000 : 조윤재 에러

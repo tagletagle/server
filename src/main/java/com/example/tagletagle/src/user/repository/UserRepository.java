@@ -18,5 +18,4 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
 	boolean existsUserEntityByNickname(String nickname);
 
-
 }
