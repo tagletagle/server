@@ -22,6 +22,8 @@ public enum BaseResponseStatus {
 	AUTHOR_NO_EXIST(false, 2001, "게시글을 적은 유저가 존재하지 않습니다"),
 
 	POST_NO_EXIST(false, 2100, "게시글이 존재하지 않습니다"),
+	NO_VALID_LOGINDTO(false, 2200, "로그인에 실패했습니다"),
+	FAILED_LOGIN(false, 2205, "로그인 파라미터 값이 올바르지 않습니다"),
 
 	/**
 	 * 3000 : 조윤재 에러
