@@ -26,6 +26,13 @@ public enum BaseResponseStatus {
 	MUST_SELECT_TAG(false, 2110, "게시글 작성 시 태그 선택은 필수입니다"),
 	NO_VALID_LOGINDTO(false, 2200, "로그인에 실패했습니다"),
 	FAILED_LOGIN(false, 2205, "로그인 파라미터 값이 올바르지 않습니다"),
+	INVALID_ACCESS_TOKEN(false,2300, "access 토큰이 올바르지 않습니다"),
+	INVALID_REFRESH_TOKEN(false,2301, "refresh 토큰이 올바르지 않습니다"),
+	EXPIRED_ACCESS_TOKEN(false, 2310, "access 토큰 시간이 만료되었습니다"),
+	EXPIRED_REFRESH_TOKEN(false, 2311, "access 토큰 시간이 만료되었습니다"),
+
+
+
 
 	/**
 	 * 3000 : 조윤재 에러
@@ -40,8 +47,7 @@ public enum BaseResponseStatus {
 	 */
 	DATA_CONFLICT(false, 5000, "데이터 충돌로 업데이트 실패"),
 	NO_EXIST_TOKEN(false,5100, "토큰이 존재하지 않습니다"),
-	EXPIRED_TOKEN(false, 5110, "토큰 시간이 만료되었습니다"),
-	INVALID_TOKEN(false,5120, "토큰이 올바르지 않습니다"),
+
 	REQUIRED_LOGIN(false, 5200, "로그인이 필요합니다"),
 
 

@@ -86,20 +86,20 @@ public class SocialJWTFilter extends OncePerRequestFilter {
 
 				System.out.println("token expired");
 				//filterChain.doFilter(request, response);
-				handleException(response, new BaseException(BaseResponseStatus.EXPIRED_TOKEN));
+				handleException(response, new BaseException(BaseResponseStatus.EXPIRED_ACCESS_TOKEN));
 				//조건이 해당되면 메소드 종료 (필수)
 				return;
 			}
 		}catch (io.jsonwebtoken.security.SignatureException e){
-			handleException(response, new BaseException(BaseResponseStatus.INVALID_TOKEN));
+			handleException(response, new BaseException(BaseResponseStatus.INVALID_ACCESS_TOKEN));
 			return;
 		}catch (io.jsonwebtoken.MalformedJwtException e){
-			handleException(response, new BaseException(BaseResponseStatus.INVALID_TOKEN));
+			handleException(response, new BaseException(BaseResponseStatus.INVALID_ACCESS_TOKEN));
 			return;
 		}catch (io.jsonwebtoken.ExpiredJwtException e){
 			System.out.println("token expired");
 			//filterChain.doFilter(request, response);
-			handleException(response, new BaseException(BaseResponseStatus.EXPIRED_TOKEN));
+			handleException(response, new BaseException(BaseResponseStatus.EXPIRED_ACCESS_TOKEN));
 			//조건이 해당되면 메소드 종료 (필수)
 			return;
 
