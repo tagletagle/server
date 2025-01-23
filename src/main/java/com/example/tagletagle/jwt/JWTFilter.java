@@ -32,25 +32,51 @@ public class JWTFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws
 		ServletException, IOException {
 
-		//request에서 Authorization 헤더를 찾음
-		System.out.println("authorization 시작");
-		String authorization= request.getHeader("Authorization");
+		//jwt 토큰 만료 -> 소셜 로그인 시도 ->jwt 토큰 만료.., 의 무한루프를 해결하기 위한 코드
+		String requestUri = request.getRequestURI();
+		if (requestUri.matches("^\\/login(?:\\/.*)?$")) {
+			filterChain.doFilter(request, response);
+			return;
+		}
+		if (requestUri.matches("^\\/oauth2(?:\\/.*)?$")) {
+			filterChain.doFilter(request, response);
+			return;
+		}
 
-		//Authorization 헤더 검증
-		if (authorization == null || !authorization.startsWith("Bearer ")) {
+		System.out.println("authorization 시작~~~~~~~~~~~~~");
 
-			System.out.println("token null");
+		String accessToken = null;
+
+		try {
+			//request에서 Authorization 헤더를 찾음
+			accessToken = request.getHeader("Authorization");
+		}catch (IllegalArgumentException e){
+			ResponseUtil.handleException(response,HttpServletResponse.SC_INTERNAL_SERVER_ERROR ,new BaseException(BaseResponseStatus.HEADER_ERROR));
+		}
+
+		// token이 필요없는 요청
+		if (accessToken == null) {
+
 			filterChain.doFilter(request, response);
 
-			ResponseUtil.handleException(response,HttpServletResponse.SC_UNAUTHORIZED ,new BaseException(
-				BaseResponseStatus.INVALID_ACCESS_TOKEN));
 			//조건이 해당되면 메소드 종료 (필수)
 			return;
 		}
 
+		//Authorization 헤더 검증
+		if (!accessToken.startsWith("Bearer ")) {
+
+			ResponseUtil.handleException(response,HttpServletResponse.SC_INTERNAL_SERVER_ERROR ,new BaseException(BaseResponseStatus.NO_BEARER_FORM));
+
+			//조건이 해당되면 메소드 종료 (필수)
+			filterChain.doFilter(request, response);
+			return;
+		}
+
+
 		System.out.println("authorization now");
 		//Bearer 부분 제거 후 순수 토큰만 획득
-		String token = authorization.split(" ")[1];
+		String token = accessToken.split(" ")[1];
 
 		//토큰 소멸 시간 검증
 		try {
@@ -77,6 +103,11 @@ public class JWTFilter extends OncePerRequestFilter {
 
 		}
 
+		String category = jwtUtil.getCategory(token);
+		if(!category.equals("access")){
+			ResponseUtil.handleException(response, HttpServletResponse.SC_UNAUTHORIZED, new BaseException(BaseResponseStatus.INVALID_ACCESS_TOKEN));
+			return;
+		}
 
 		//토큰에서 username과 role 획득
 		String username = jwtUtil.getUsername(token);

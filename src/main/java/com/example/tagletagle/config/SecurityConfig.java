@@ -22,6 +22,7 @@ import com.example.tagletagle.jwt.SocialJWTFilter;
 import com.example.tagletagle.jwt.JWTUtil;
 import com.example.tagletagle.oauth.handler.CustomSuccessHandler;
 import com.example.tagletagle.oauth.service.CustomOauth2UserService;
+import com.example.tagletagle.src.user.repository.RefreshRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,7 @@ public class SecurityConfig {
 	private final AuthenticationConfiguration authenticationConfiguration;
 
 	private final JWTUtil jwtUtil;
+	private final RefreshRepository refreshRepository;
 
 	//AuthenticationManager Bean 등록
 	@Bean
@@ -88,10 +90,11 @@ public class SecurityConfig {
 			.httpBasic((auth) -> auth.disable());
 
 		http
-			.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
+			.addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
 
 		http
-			.addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
+			.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshRepository), UsernamePasswordAuthenticationFilter.class);
+
 		//JWTFilter 추가
 		/*http
 				.addFilterBefore(new SocialJWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);*/
@@ -112,9 +115,13 @@ public class SecurityConfig {
 		//경로별 인가 작업
 		http
 			.authorizeHttpRequests((auth) -> auth
-				.requestMatchers("/login").permitAll()
+				.requestMatchers("/login", "/reissue").permitAll()
 				.requestMatchers("/social/login").authenticated()
 				.anyRequest().permitAll());
+
+		// logout 필터 비활성화
+		http
+			.logout(logout -> logout.disable());
 
 		//세션 설정 : STATELESS
 		http

@@ -2,6 +2,7 @@ package com.example.tagletagle.auth;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,6 +17,8 @@ import com.example.tagletagle.base.BaseResponseStatus;
 import com.example.tagletagle.jwt.JWTUtil;
 import com.example.tagletagle.src.user.dto.LoginDTO;
 import com.example.tagletagle.src.user.dto.LoginResponseDTO;
+import com.example.tagletagle.src.user.entity.RefreshEntity;
+import com.example.tagletagle.src.user.repository.RefreshRepository;
 import com.example.tagletagle.utils.ResponseUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -29,6 +32,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
 	private final AuthenticationManager authenticationManager;
 	private final JWTUtil jwtUtil;
+	private final RefreshRepository refreshRepository;
+
 
 
 	@Override
@@ -37,7 +42,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
 		//ObjectMapper 이용 시, json 형식으로 로그인 요청을 받을 수 있다.(username, password)
 		ObjectMapper om = new ObjectMapper();
-		LoginDTO loginDTO;
+		LoginDTO loginDTO = null;
 
 		try {
 			loginDTO = om.readValue(request.getInputStream(), LoginDTO.class);
@@ -48,6 +53,20 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
 			ResponseUtil.handleException(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR ,new BaseException(
 				BaseResponseStatus.NO_VALID_LOGINDTO));
+			return null;
+		}
+
+		if(loginDTO == null){
+			ResponseUtil.handleException(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR ,new BaseException(
+				BaseResponseStatus.NO_VALID_LOGINDTO));
+
+			return null;
+		}
+
+		if(loginDTO.getUsername() == null || loginDTO.getUsername().isBlank()){
+			ResponseUtil.handleException(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR ,new BaseException(
+				BaseResponseStatus.NO_VALID_LOGINDTO));
+
 			return null;
 		}
 
@@ -79,10 +98,16 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		String role = auth.getAuthority();
 		Long userId = customUserDetails.getUserId();
 
-		String accessToken = jwtUtil.createJwt(username, userId, role, 7*24*60*60*1000L);
+		// 1일
+		String accessToken = jwtUtil.createJwt("access", username, userId, role, 24*60*60*1000L);
+		// 7일
+		String refreshToken = jwtUtil.createJwt("refresh", username, userId, role, 7*24*60*60*1000L );
 
-		response.addHeader("Authorization", "Bearer " + accessToken);
-		ResponseUtil.handleResponse(response, new LoginResponseDTO(customUserDetails.getIsNewUser(), "Bearer "+ accessToken));
+		addRefreshEntity(username, refreshToken, 7*24*60*60*1000L);
+
+		response.addHeader("access", "Bearer " + accessToken);
+		response.addHeader("refresh", "Bearer " + refreshToken);
+		ResponseUtil.handleResponse(response, new LoginResponseDTO(customUserDetails.getIsNewUser(), "Bearer "+ accessToken, "Bearer " + refreshToken));
 
 	}
 
@@ -93,4 +118,17 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		System.out.println("fail");
 		ResponseUtil.handleException(response,HttpServletResponse.SC_UNAUTHORIZED ,new BaseException(BaseResponseStatus.FAILED_LOGIN));
 	}
+
+	private void addRefreshEntity(String username, String refresh, Long expiredMs) {
+
+		Date date = new Date(System.currentTimeMillis() + expiredMs);
+
+		RefreshEntity refreshEntity = new RefreshEntity();
+		refreshEntity.setUsername(username);
+		refreshEntity.setRefresh(refresh);
+		refreshEntity.setExpiration(date.toString());
+
+		refreshRepository.save(refreshEntity);
+	}
+
 }

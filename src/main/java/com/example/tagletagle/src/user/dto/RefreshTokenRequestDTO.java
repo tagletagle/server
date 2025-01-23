@@ -1,6 +1,7 @@
 package com.example.tagletagle.src.user.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,14 +10,13 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Schema(description = "로그인 후 응답을 담은 DTO")
+@Schema(description = "refresh token 요청 DTO")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginResponseDTO {
+public class RefreshTokenRequestDTO {
 
-	private Boolean isNewUser;
-	private String accessToken;
+	@NotBlank
 	private String refreshToken;
 
 }

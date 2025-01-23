@@ -9,13 +9,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Schema(description = "로그인 후 응답을 담은 DTO")
+@Schema(description = "access token, refresh token 응답 DTO")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginResponseDTO {
+public class TokenResponseDTO {
 
-	private Boolean isNewUser;
 	private String accessToken;
 	private String refreshToken;
 
