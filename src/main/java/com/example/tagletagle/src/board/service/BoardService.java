@@ -44,7 +44,6 @@ public class BoardService {
 	private final PostLikeRepository postLikeRepository;
 	private final PostScrapRepository postScrapRepository;
 
-	private final SearchResultRepository searchResultRepository;
 
 	private final SearchHistoryRepository searchHistoryRepository;
 

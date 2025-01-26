@@ -2,7 +2,6 @@ package com.example.tagletagle.src.user.entity;
 
 import java.time.LocalDate;
 
-import com.example.tagletagle.src.board.repository.SearchResultRepository;
 import org.hibernate.annotations.DynamicInsert;
 
 import com.example.tagletagle.base.BaseEntity;
@@ -23,7 +22,7 @@ import lombok.Setter;
 @Table(name = "user")
 @NoArgsConstructor
 @DynamicInsert
-public class UserEntity extends BaseEntity implements SearchResultRepository {
+public class UserEntity extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -75,14 +74,6 @@ public class UserEntity extends BaseEntity implements SearchResultRepository {
 	}
 
 
-	@Override
-	public String getNickNameAndTagName() {
-		return nickname != null ? nickname : username;
-	}
-
-	@Override
-	public String getType(){
-		return "user";
 
 	public UserEntity(String username){
 		this.username = username;
