@@ -2,6 +2,7 @@ package com.example.tagletagle.src.tag.controller;
 
 import com.example.tagletagle.src.tag.dto.TagDTO;
 import com.example.tagletagle.src.tag.service.TagService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,5 +20,12 @@ public class TagController {
     public List<TagDTO> getFullTagList() {
         return tagService.findAllTag();
 
+    }
+
+    //최근 사용한 태그 목록 불러오기
+    @GetMapping("/api/user/tag/recent")
+    public ResponseEntity<List<TagDTO>> getRecentTags(){
+        List<TagDTO> recentTags = tagService.getRecentTags();
+        return ResponseEntity.ok(recentTags);
     }
 }
