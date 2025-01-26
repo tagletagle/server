@@ -2,7 +2,6 @@ package com.example.tagletagle.src.board.controller;
 
 
 import com.example.tagletagle.src.board.dto.BoardResponseDTO;
-import com.example.tagletagle.src.board.repository.SearchResultRepository;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.tagletagle.src.board.dto.SearchHistoryDTO;
