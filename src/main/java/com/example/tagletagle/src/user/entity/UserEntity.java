@@ -34,6 +34,9 @@ public class UserEntity extends BaseEntity implements SearchResultRepository {
 	@Column(nullable = false)
 	private String username;
 
+	@Column(nullable = false)
+	private String password;
+
 	//기본 정보 입력 시 적는 닉네임
 	@Column(nullable = true)
 	private String nickname;
@@ -71,6 +74,7 @@ public class UserEntity extends BaseEntity implements SearchResultRepository {
 		this.followingCount = 0L;
 	}
 
+
 	@Override
 	public String getNickNameAndTagName() {
 		return nickname != null ? nickname : username;
@@ -79,6 +83,14 @@ public class UserEntity extends BaseEntity implements SearchResultRepository {
 	@Override
 	public String getType(){
 		return "user";
+
+	public UserEntity(String username){
+		this.username = username;
+		this.password = "tagle1234";
+		this.role = "ROLE_USER";
+		this.followerCount = 0L;
+		this.followingCount = 0L;
+
 	}
 
 	public void increaseFollowerCount(){

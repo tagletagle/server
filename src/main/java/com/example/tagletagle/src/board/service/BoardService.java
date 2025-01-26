@@ -5,8 +5,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.example.tagletagle.src.board.dto.*;
+
 import com.example.tagletagle.src.board.repository.*;
 import org.apache.catalina.User;
+
+import com.example.tagletagle.src.board.entity.SearchHistoryEntity;
+import com.example.tagletagle.src.board.repository.*;
+import com.example.tagletagle.src.user.dto.FollowsDTO;
+import com.example.tagletagle.src.user.entity.FollowsEntity;
+
 import org.springframework.stereotype.Service;
 
 import com.example.tagletagle.base.BaseException;
@@ -36,7 +43,11 @@ public class BoardService {
 	private final PostTagRepository postTagRepository;
 	private final PostLikeRepository postLikeRepository;
 	private final PostScrapRepository postScrapRepository;
+
 	private final SearchResultRepository searchResultRepository;
+
+	private final SearchHistoryRepository searchHistoryRepository;
+
 
 	@Transactional
 	public void createPost(Long userId, CreatePostDTO createPostDTO) {
@@ -49,9 +60,12 @@ public class BoardService {
 
 		List<Long> tagList = createPostDTO.getTagIdList();
 
+		if(createPostDTO.getUrl() == null){
+			throw new BaseException(BaseResponseStatus.MUST_SELECT_TAG);
+		}
+
 		if(tagList.size() == 0){
-			//예외 처리
-			return;
+			throw new BaseException(BaseResponseStatus.MUST_SELECT_TAG);
 		}
 
 		List<TagEntity> tagEntityList = tagRepository.findAllById(tagList);
@@ -87,7 +101,7 @@ public class BoardService {
 
 	}
 
-	public PostsDTO getPostsByUserWithTag(Long userId, Long authorId, String tagName) {
+	public PostsDTO getPostsByUserWithTag(Long userId, Long authorId, Long tagId) {
 		UserEntity user = userRepository.findUserEntityByIdAndStatus(userId, Status.ACTIVE)
 			.orElseThrow(()->new BaseException(BaseResponseStatus.USER_NO_EXIST));
 
@@ -95,8 +109,9 @@ public class BoardService {
 			.orElseThrow(()->new BaseException(BaseResponseStatus.AUTHOR_NO_EXIST));
 
 		PostsDTO postsDTO = new PostsDTO();
-		List<PostInfoDTO> postInfoDTOList = boardRepository.findPostsByAuthorAndUserWithTag(authorId, userId, tagName);
+		List<PostInfoDTO> postInfoDTOList = boardRepository.findPostsByAuthorAndUserWithTag(authorId, userId, tagId);
 		if(postInfoDTOList.size() == 0){
+			System.out.println("해당 태그로 작성한 글이 없습니다");
 			return postsDTO;
 		}
 
@@ -184,6 +199,7 @@ public class BoardService {
 
 	}
 
+
 	public List<BoardResponseDTO> getHotBoard(Long likeCount) {
 
 		// 유효성 검사
@@ -202,4 +218,23 @@ public class BoardService {
 						post.getCommentCount()
 				))
 				.collect(Collectors.toList());    }
+
+  
+	public List<SearchHistoryDTO> getUserSearchHistory(Long userId) {
+		return searchHistoryRepository.findSearchHistoryEntitiesByUser_Id(userId).stream()
+				.map(this:: convertToSearchHistoryDTO)
+				.collect(Collectors.toList());
+	}
+
+	private SearchHistoryDTO convertToSearchHistoryDTO(SearchHistoryEntity searchHistoryEntity) {
+		SearchHistoryDTO searchHistoryDTO = new SearchHistoryDTO();
+
+		searchHistoryDTO.setId((searchHistoryEntity.getId()));
+		searchHistoryDTO.setContent(searchHistoryEntity.getContents());
+		searchHistoryDTO.setUserId(searchHistoryEntity.getUser().getId());
+
+		return searchHistoryDTO;
+	}
+
+
 }

@@ -74,7 +74,7 @@ public class BoardRepository {
 
 	}
 
-	public List<PostInfoDTO> findPostsByAuthorAndUserWithTag(Long authorId, Long userId, String tagName) {
+	public List<PostInfoDTO> findPostsByAuthorAndUserWithTag(Long authorId, Long userId, Long tagId) {
 
 		String sql = "SELECT p.id AS postId, p.title AS title, p.url AS url, " +
 			"p.comment_count AS commentCount, p.like_count AS likeCount, p.scrap_count AS scrapCount, " +
@@ -114,7 +114,7 @@ public class BoardRepository {
 					return new PostInfoDTO(postId, title, url, commentCount, likeCount, scrapCount, authorId, authorNickname, authorProfileImgUrl, isLike, isScrap,tagIds, tagNames);
 				}
 			},
-			userId, userId, authorId, tagName
+			userId, userId, authorId, tagId
 
 		);
 		return postInfoDTOList;

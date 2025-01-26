@@ -1,8 +1,13 @@
 package com.example.tagletagle.src.tag.service;
 
+import com.example.tagletagle.src.tag.dto.TagInterestsDTO;
 import com.example.tagletagle.src.tag.entity.TagEntity;
+import com.example.tagletagle.src.tag.entity.UserTagInterests;
+import com.example.tagletagle.src.tag.repository.TagInterestsRepository;
 import com.example.tagletagle.src.tag.repository.TagRepository;
 import com.example.tagletagle.src.tag.dto.TagDTO;
+import com.example.tagletagle.src.user.dto.FollowsDTO;
+import com.example.tagletagle.src.user.entity.FollowsEntity;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -14,6 +19,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TagService {
         private final TagRepository tagRepository;
+        private final TagInterestsRepository tagInterestsRepository;
         /*stream 사용해서 컬렉션 데이터를 변환
          * map은 요소를 다른 값으로 변환
          * collect 사용하면 스트림 요소 수집해서 컬렉션 생성*/
@@ -31,4 +37,23 @@ public class TagService {
             return tagDTO;
         }
 
+    public List<TagInterestsDTO> getUserTagInterests(Long user) {
+        return tagInterestsRepository.findUserTagInterestsByUser(user).stream()
+                .map(this::convertToTagInterestsDTO)
+                .collect(Collectors.toList());
     }
+
+    private TagInterestsDTO convertToTagInterestsDTO(UserTagInterests userTagInterests) {
+        TagInterestsDTO tagInterestsDTO = new TagInterestsDTO();
+
+        tagInterestsDTO.setId((userTagInterests.getId()));
+        tagInterestsDTO.setUserId(userTagInterests.getUser().getId());
+        tagInterestsDTO.setTagId(userTagInterests.getTag().getId());
+
+        return  tagInterestsDTO;
+    }
+
+
+
+
+}
