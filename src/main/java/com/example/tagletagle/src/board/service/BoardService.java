@@ -2,24 +2,19 @@ package com.example.tagletagle.src.board.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.example.tagletagle.src.board.dto.*;
+import com.example.tagletagle.src.board.repository.*;
+import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 
 import com.example.tagletagle.base.BaseException;
 import com.example.tagletagle.base.BaseResponseStatus;
 import com.example.tagletagle.config.Status;
-import com.example.tagletagle.src.board.dto.CommentInfoDTO;
-import com.example.tagletagle.src.board.dto.CommentsDTO;
-import com.example.tagletagle.src.board.dto.CreatePostDTO;
-import com.example.tagletagle.src.board.dto.PostInfoDTO;
-import com.example.tagletagle.src.board.dto.PostsDTO;
 import com.example.tagletagle.src.board.entity.PostEntity;
 import com.example.tagletagle.src.board.entity.PostLikeEntity;
 import com.example.tagletagle.src.board.entity.PostScrapEntity;
-import com.example.tagletagle.src.board.repository.BoardRepository;
-import com.example.tagletagle.src.board.repository.PostLikeRepository;
-import com.example.tagletagle.src.board.repository.PostRepository;
-import com.example.tagletagle.src.board.repository.PostScrapRepository;
 import com.example.tagletagle.src.tag.entity.PostTagEntity;
 import com.example.tagletagle.src.tag.entity.TagEntity;
 import com.example.tagletagle.src.tag.repository.PostTagRepository;
@@ -41,6 +36,7 @@ public class BoardService {
 	private final PostTagRepository postTagRepository;
 	private final PostLikeRepository postLikeRepository;
 	private final PostScrapRepository postScrapRepository;
+	private final SearchResultRepository searchResultRepository;
 
 	@Transactional
 	public void createPost(Long userId, CreatePostDTO createPostDTO) {
@@ -187,4 +183,23 @@ public class BoardService {
 		return commentsDTO;
 
 	}
+
+	public List<BoardResponseDTO> getHotBoard(Long likeCount) {
+
+		// 유효성 검사
+		if (likeCount == null || likeCount < 0) {
+			throw new IllegalArgumentException("likeCount must be a non-negative number and cannot be null.");
+		}
+
+		List<PostEntity> hotPosts = boardRepository.selectByLike(likeCount);
+
+		return hotPosts.stream()
+				.map(post -> new BoardResponseDTO(
+						post.getId(),
+						post.getTitle(),
+						post.getUrl(),
+						post.getLikeCount(),
+						post.getCommentCount()
+				))
+				.collect(Collectors.toList());    }
 }

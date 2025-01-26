@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import com.example.tagletagle.src.board.entity.PostEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -156,7 +157,23 @@ public class BoardRepository {
 
 	}
 
-
-
-
+	public List<PostEntity> selectByLike(Long likeCount) {
+		return jdbcTemplate.query(
+				"SELECT id, url, like_count, title, comment_count, updated_at FROM post WHERE like_count >= ? ORDER BY like_count DESC LIMIT 5",
+				new RowMapper<PostEntity>() {
+					@Override
+					public PostEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
+						PostEntity post = new PostEntity();
+						post.setId(rs.getLong("id"));
+						post.setUrl(rs.getString("url"));
+						post.setLikeCount(rs.getLong("like_count"));
+						post.setTitle(rs.getString("title"));
+						post.setCommentCount(rs.getLong("comment_count"));
+						rs.getTimestamp("updated_at").toLocalDateTime();
+						return post;
+					}
+				},
+				likeCount
+		);
+	}
 }

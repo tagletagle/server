@@ -2,6 +2,7 @@ package com.example.tagletagle.src.user.entity;
 
 import java.time.LocalDate;
 
+import com.example.tagletagle.src.board.repository.SearchResultRepository;
 import org.hibernate.annotations.DynamicInsert;
 
 import com.example.tagletagle.base.BaseEntity;
@@ -22,7 +23,7 @@ import lombok.Setter;
 @Table(name = "user")
 @NoArgsConstructor
 @DynamicInsert
-public class UserEntity extends BaseEntity {
+public class UserEntity extends BaseEntity implements SearchResultRepository {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -68,6 +69,16 @@ public class UserEntity extends BaseEntity {
 		this.role = role;
 		this.followerCount = 0L;
 		this.followingCount = 0L;
+	}
+
+	@Override
+	public String getNickNameAndTagName() {
+		return nickname != null ? nickname : username;
+	}
+
+	@Override
+	public String getType(){
+		return "user";
 	}
 
 	public void increaseFollowerCount(){
