@@ -1,5 +1,7 @@
 package com.example.tagletagle.src.board.controller;
 
+import com.example.tagletagle.src.board.dto.SearchHistoryDTO;
+import com.example.tagletagle.src.user.dto.FollowsDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +25,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -171,5 +175,13 @@ public class BoardController {
 		}
 	}
 
+	@GetMapping("/api/board/search/history")
+	public List<SearchHistoryDTO> getFSearchHistoryList(){
+		Long userId = SecurityUtil.getCurrentUserId()
+				.orElseThrow(() -> new BaseException(BaseResponseStatus.REQUIRED_LOGIN));
+
+		return boardService.getUserSearchHistory(userId);
+
+	}
 
 }

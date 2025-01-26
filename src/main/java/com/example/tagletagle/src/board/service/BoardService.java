@@ -2,24 +2,21 @@ package com.example.tagletagle.src.board.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.example.tagletagle.src.board.dto.*;
+import com.example.tagletagle.src.board.entity.SearchHistoryEntity;
+import com.example.tagletagle.src.board.repository.*;
+import com.example.tagletagle.src.user.dto.FollowsDTO;
+import com.example.tagletagle.src.user.entity.FollowsEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.tagletagle.base.BaseException;
 import com.example.tagletagle.base.BaseResponseStatus;
 import com.example.tagletagle.config.Status;
-import com.example.tagletagle.src.board.dto.CommentInfoDTO;
-import com.example.tagletagle.src.board.dto.CommentsDTO;
-import com.example.tagletagle.src.board.dto.CreatePostDTO;
-import com.example.tagletagle.src.board.dto.PostInfoDTO;
-import com.example.tagletagle.src.board.dto.PostsDTO;
 import com.example.tagletagle.src.board.entity.PostEntity;
 import com.example.tagletagle.src.board.entity.PostLikeEntity;
 import com.example.tagletagle.src.board.entity.PostScrapEntity;
-import com.example.tagletagle.src.board.repository.BoardRepository;
-import com.example.tagletagle.src.board.repository.PostLikeRepository;
-import com.example.tagletagle.src.board.repository.PostRepository;
-import com.example.tagletagle.src.board.repository.PostScrapRepository;
 import com.example.tagletagle.src.tag.entity.PostTagEntity;
 import com.example.tagletagle.src.tag.entity.TagEntity;
 import com.example.tagletagle.src.tag.repository.PostTagRepository;
@@ -41,6 +38,7 @@ public class BoardService {
 	private final PostTagRepository postTagRepository;
 	private final PostLikeRepository postLikeRepository;
 	private final PostScrapRepository postScrapRepository;
+	private final SearchHistoryRepository searchHistoryRepository;
 
 	@Transactional
 	public void createPost(Long userId, CreatePostDTO createPostDTO) {
@@ -191,4 +189,21 @@ public class BoardService {
 		return commentsDTO;
 
 	}
+
+	public List<SearchHistoryDTO> getUserSearchHistory(Long userId) {
+		return searchHistoryRepository.findSearchHistoryEntitiesByUser_Id(userId).stream()
+				.map(this:: convertToSearchHistoryDTO)
+				.collect(Collectors.toList());
+	}
+
+	private SearchHistoryDTO convertToSearchHistoryDTO(SearchHistoryEntity searchHistoryEntity) {
+		SearchHistoryDTO searchHistoryDTO = new SearchHistoryDTO();
+
+		searchHistoryDTO.setId((searchHistoryEntity.getId()));
+		searchHistoryDTO.setContent(searchHistoryEntity.getContents());
+		searchHistoryDTO.setUserId(searchHistoryEntity.getUser().getId());
+
+		return searchHistoryDTO;
+	}
+
 }
