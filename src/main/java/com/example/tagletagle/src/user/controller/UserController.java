@@ -1,5 +1,9 @@
 package com.example.tagletagle.src.user.controller;
 
+
+import com.example.tagletagle.src.user.dto.UserProfileResponseDTO;
+import com.example.tagletagle.src.user.entity.UserEntity;
+
 import com.example.tagletagle.src.board.dto.PostsDTO;
 import com.example.tagletagle.src.user.dto.FollowsDTO;
 
@@ -93,6 +97,15 @@ public class UserController {
 
 	}
 
+
+	//사용자 프로필 조회
+	@GetMapping("/api/user/{userId}/profile")
+	public ResponseEntity<UserProfileResponseDTO> getUserProfile(@PathVariable Long userId){
+		UserProfileResponseDTO userProfile = userService.getUserProfile(userId);
+		return ResponseEntity.ok(userProfile);
+	}
+
+
 	@GetMapping("/api/user/following/{follower}")
 	@Operation(summary = "팔로워 목록을 조회하는 api", description = "url로 user_id를 받아 해당 user의 팔로워 목록을 조회하는 api입니다", responses = {
 		@ApiResponse(responseCode = "200", description = "성공"),
@@ -107,6 +120,7 @@ public class UserController {
 			return ResponseEntity.status(httpStatus).body(new BaseResponse<>(e.getStatus()));
 		}
 	}
+
 
 
 }

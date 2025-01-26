@@ -1,5 +1,10 @@
 package com.example.tagletagle.src.board.controller;
 
+
+import com.example.tagletagle.src.board.dto.BoardResponseDTO;
+import com.example.tagletagle.src.board.repository.SearchResultRepository;
+import org.springframework.web.bind.annotation.*;
+
 import com.example.tagletagle.src.board.dto.SearchHistoryDTO;
 import com.example.tagletagle.src.user.dto.FollowsDTO;
 import org.springframework.http.HttpStatus;
@@ -10,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
 
 import com.example.tagletagle.base.BaseException;
 import com.example.tagletagle.base.BaseResponse;
@@ -27,6 +33,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -175,6 +184,16 @@ public class BoardController {
 		}
 	}
 
+
+	@GetMapping("/api/board/hot")
+	public ResponseEntity<List<BoardResponseDTO>> getHotBoard(
+			@RequestParam(required = false, defaultValue = "0") Long likeCount
+	){
+		List<BoardResponseDTO> hotPosts = boardService.getHotBoard(likeCount);
+		return ResponseEntity.ok(hotPosts);
+	}
+
+  
 	@GetMapping("/api/board/search/history")
 	public List<SearchHistoryDTO> getFSearchHistoryList(){
 		Long userId = SecurityUtil.getCurrentUserId()

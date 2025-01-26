@@ -5,10 +5,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.example.tagletagle.src.board.dto.*;
+
+import com.example.tagletagle.src.board.repository.*;
+import org.apache.catalina.User;
+
 import com.example.tagletagle.src.board.entity.SearchHistoryEntity;
 import com.example.tagletagle.src.board.repository.*;
 import com.example.tagletagle.src.user.dto.FollowsDTO;
 import com.example.tagletagle.src.user.entity.FollowsEntity;
+
 import org.springframework.stereotype.Service;
 
 import com.example.tagletagle.base.BaseException;
@@ -38,7 +43,11 @@ public class BoardService {
 	private final PostTagRepository postTagRepository;
 	private final PostLikeRepository postLikeRepository;
 	private final PostScrapRepository postScrapRepository;
+
+	private final SearchResultRepository searchResultRepository;
+
 	private final SearchHistoryRepository searchHistoryRepository;
+
 
 	@Transactional
 	public void createPost(Long userId, CreatePostDTO createPostDTO) {
@@ -190,6 +199,27 @@ public class BoardService {
 
 	}
 
+
+	public List<BoardResponseDTO> getHotBoard(Long likeCount) {
+
+		// 유효성 검사
+		if (likeCount == null || likeCount < 0) {
+			throw new IllegalArgumentException("likeCount must be a non-negative number and cannot be null.");
+		}
+
+		List<PostEntity> hotPosts = boardRepository.selectByLike(likeCount);
+
+		return hotPosts.stream()
+				.map(post -> new BoardResponseDTO(
+						post.getId(),
+						post.getTitle(),
+						post.getUrl(),
+						post.getLikeCount(),
+						post.getCommentCount()
+				))
+				.collect(Collectors.toList());    }
+
+  
 	public List<SearchHistoryDTO> getUserSearchHistory(Long userId) {
 		return searchHistoryRepository.findSearchHistoryEntitiesByUser_Id(userId).stream()
 				.map(this:: convertToSearchHistoryDTO)
@@ -205,5 +235,6 @@ public class BoardService {
 
 		return searchHistoryDTO;
 	}
+
 
 }

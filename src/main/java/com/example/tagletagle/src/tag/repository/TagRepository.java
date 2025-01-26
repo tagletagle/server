@@ -11,5 +11,9 @@ import org.springframework.data.repository.query.Param;
 
 public interface TagRepository extends JpaRepository<TagEntity, Long> {
 
+    @Query("SELECT t FROM TagEntity t WHERE t.name LIKE %:word%")
+    List<TagEntity> findTagsByName(@Param("word")String word);
+
+
 }
 
