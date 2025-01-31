@@ -2,21 +2,20 @@ package com.example.tagletagle.jwt;
 
 import java.io.IOException;
 
+import com.example.tagletagle.jwt.JWTUtil;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.example.tagletagle.auth.CustomUserDetails;
 import com.example.tagletagle.base.BaseException;
-import com.example.tagletagle.base.BaseResponse;
 import com.example.tagletagle.base.BaseResponseStatus;
-import com.example.tagletagle.oauth.dto.CustomOAuth2User;
-import com.example.tagletagle.oauth.dto.OAuth2UserDTO;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.tagletagle.src.user.entity.UserEntity;
+import com.example.tagletagle.utils.ResponseUtil;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -29,9 +28,10 @@ public class JWTFilter extends OncePerRequestFilter {
 		this.jwtUtil = jwtUtil;
 	}
 
+
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws
-		ServletException, IOException {
+			ServletException, IOException {
 
 		//jwt 토큰 만료 -> 소셜 로그인 시도 ->jwt 토큰 만료.., 의 무한루프를 해결하기 위한 코드
 		String requestUri = request.getRequestURI();
@@ -44,105 +44,91 @@ public class JWTFilter extends OncePerRequestFilter {
 			return;
 		}
 
+		System.out.println("authorization 시작~~~~~~~~~~~~~");
 
-		//cookie들을 불러온 뒤 Authorization Key에 담긴 쿠키를 찾음
-		String authorization = null;
-		Cookie[] cookies = request.getCookies();
+		String accessToken = null;
 
-		//토큰이 없는 경우
-		if (cookies == null) {
-			System.out.println("token null");
-			//filterChain.doFilter(request, response);
-
-			handleException(response, new BaseException(BaseResponseStatus.NO_EXIST_TOKEN));
-			//조건이 해당되면 메소드 종료 (필수)
-			return;
+		try {
+			//request에서 Authorization 헤더를 찾음
+			accessToken = request.getHeader("Authorization");
+		}catch (IllegalArgumentException e){
+			ResponseUtil.handleException(response,HttpServletResponse.SC_INTERNAL_SERVER_ERROR ,new BaseException(BaseResponseStatus.HEADER_ERROR));
 		}
 
-		for (Cookie cookie : cookies) {
+		// token이 필요없는 요청
+		if (accessToken == null) {
 
-			if (cookie.getName().equals("Authorization")) {
+			filterChain.doFilter(request, response);
 
-				authorization = cookie.getValue();
-			}
+			//조건이 해당되면 메소드 종료 (필수)
+			return;
 		}
 
 		//Authorization 헤더 검증
-		if (authorization == null) {
-			System.out.println("token null");
-			//filterChain.doFilter(request, response);
+		if (!accessToken.startsWith("Bearer ")) {
 
-			handleException(response, new BaseException(BaseResponseStatus.NO_EXIST_TOKEN));
+			ResponseUtil.handleException(response,HttpServletResponse.SC_INTERNAL_SERVER_ERROR ,new BaseException(BaseResponseStatus.NO_BEARER_FORM));
+
 			//조건이 해당되면 메소드 종료 (필수)
+			filterChain.doFilter(request, response);
 			return;
 		}
 
-		//토큰
-		String token = authorization;
 
-		//토큰 소멸 시간 검증 + 토큰 유효성 검사
+		System.out.println("authorization now");
+		//Bearer 부분 제거 후 순수 토큰만 획득
+		String token = accessToken.split(" ")[1];
+
+		//토큰 소멸 시간 검증
 		try {
 			if (jwtUtil.isExpired(token)) {
 
 				System.out.println("token expired");
-				//filterChain.doFilter(request, response);
-				handleException(response, new BaseException(BaseResponseStatus.EXPIRED_TOKEN));
+				filterChain.doFilter(request, response);
+
 				//조건이 해당되면 메소드 종료 (필수)
 				return;
 			}
 		}catch (io.jsonwebtoken.security.SignatureException e){
-			handleException(response, new BaseException(BaseResponseStatus.INVALID_TOKEN));
+			ResponseUtil.handleException(response,HttpServletResponse.SC_UNAUTHORIZED ,new BaseException(BaseResponseStatus.INVALID_ACCESS_TOKEN));
 			return;
 		}catch (io.jsonwebtoken.MalformedJwtException e){
-			handleException(response, new BaseException(BaseResponseStatus.INVALID_TOKEN));
+			ResponseUtil.handleException(response, HttpServletResponse.SC_UNAUTHORIZED, new BaseException(BaseResponseStatus.INVALID_ACCESS_TOKEN));
 			return;
 		}catch (io.jsonwebtoken.ExpiredJwtException e){
 			System.out.println("token expired");
 			//filterChain.doFilter(request, response);
-			handleException(response, new BaseException(BaseResponseStatus.EXPIRED_TOKEN));
+			ResponseUtil.handleException(response, HttpServletResponse.SC_UNAUTHORIZED ,new BaseException(BaseResponseStatus.EXPIRED_ACCESS_TOKEN));
 			//조건이 해당되면 메소드 종료 (필수)
 			return;
 
 		}
 
+		String category = jwtUtil.getCategory(token);
+		if(!category.equals("access")){
+			ResponseUtil.handleException(response, HttpServletResponse.SC_UNAUTHORIZED, new BaseException(BaseResponseStatus.INVALID_ACCESS_TOKEN));
+			return;
+		}
 
 		//토큰에서 username과 role 획득
 		String username = jwtUtil.getUsername(token);
 		String role = jwtUtil.getRole(token);
 		Long userId = jwtUtil.getUserId(token);
 
-		//userDTO를 생성하여 값 set
-		OAuth2UserDTO oAuth2UserDTO = new OAuth2UserDTO();
-		oAuth2UserDTO.setUsername(username);
-		oAuth2UserDTO.setRole(role);
-		oAuth2UserDTO.setUserId(userId);
+		//userEntity를 생성하여 값 set
+		UserEntity userEntity = new UserEntity();
+		userEntity.setUsername(username);
+		userEntity.setPassword("temppassword");
+		userEntity.setRole(role);
 
 		//UserDetails에 회원 정보 객체 담기
-		CustomOAuth2User customOAuth2User = new CustomOAuth2User(oAuth2UserDTO);
+		CustomUserDetails customUserDetails = new CustomUserDetails(userEntity, userId);
 
 		//스프링 시큐리티 인증 토큰 생성
-		Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, null, customOAuth2User.getAuthorities());
+		Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
 		//세션에 사용자 등록
 		SecurityContextHolder.getContext().setAuthentication(authToken);
 
 		filterChain.doFilter(request, response);
 	}
-
-	private void handleException(HttpServletResponse response, BaseException e) throws IOException {
-		// HTTP 상태 코드 설정
-		response.setStatus(HttpServletResponse.SC_OK); // 또는 e.getStatusCode()
-		response.setContentType("application/json");
-		response.setCharacterEncoding("UTF-8");
-
-		// BaseResponse 형태의 에러 응답 작성
-		BaseResponse<BaseResponseStatus> errorResponse = new BaseResponse<>(e.getStatus());
-		ObjectMapper objectMapper = new ObjectMapper();
-		String jsonResponse = objectMapper.writeValueAsString(errorResponse);
-
-		// 응답 출력
-		response.getWriter().write(jsonResponse);
-		response.getWriter().flush();
-	}
-
 }
-

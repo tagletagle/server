@@ -22,11 +22,11 @@ public class TagController {
 
     }
 
-//    //최근 사용한 태그 목록 불러오기
-//    @GetMapping("/api/user/tag/recent")
-//    public ResponseEntity<List<TagDTO>> getRecentTags(){
-//        List<TagDTO> recentTags = tagService.getRecentTags();
-//        return ResponseEntity.ok(recentTags);
-//    }
+    //최근 사용한 태그 목록 불러오기
+    @GetMapping("/api/user/tag/recent")
+    public ResponseEntity<List<TagDTO>> getRecentTags(){
+        List<TagDTO> recentTags = tagService.getRecentTags();
+        return ResponseEntity.ok(recentTags);
+    }
 
 }

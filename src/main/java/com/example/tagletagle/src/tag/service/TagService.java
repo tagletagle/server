@@ -53,7 +53,17 @@ public class TagService {
         return  tagInterestsDTO;
     }
 
+    /**
+     * 최근 사용한 태그 목록 조회
+     * @return List<TagResponse> 최근 사용한 태그 목록
+     */
+    public List<TagDTO> getRecentTags(){
+        List<TagEntity> recentTags = tagRepository.findTop10ByOrderByUpdateAtDesc();
 
-
+        // Entity를 DTO로 변환
+        return recentTags.stream()
+                .map(tag->new TagDTO(tag.getId(), tag.getName()))
+                .collect(Collectors.toList());
+    }
 
 }

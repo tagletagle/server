@@ -1,6 +1,5 @@
 package com.example.tagletagle.src.tag.entity;
 
-import com.example.tagletagle.src.board.repository.SearchResultRepository;
 import org.hibernate.annotations.DynamicInsert;
 
 import com.example.tagletagle.base.BaseEntity;
@@ -21,7 +20,7 @@ import lombok.Setter;
 @Table(name = "tag")
 @NoArgsConstructor
 @DynamicInsert
-public class TagEntity extends BaseEntity implements SearchResultRepository {
+public class TagEntity extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,13 +30,4 @@ public class TagEntity extends BaseEntity implements SearchResultRepository {
 	@Column(nullable = false)
 	private String name;
 
-	@Override
-	public String getNickNameAndTagName(){
-		return name != null ? name : null;
-	}
-
-	@Override
-	public String getType(){
-		return "user";
-	}
 }
