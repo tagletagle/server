@@ -100,6 +100,11 @@ public class UserController {
 
 	//사용자 프로필 조회
 	@GetMapping("/api/user/{userId}/profile")
+	@Operation(summary = "사용자 프로필을 조회하는 api", description = "url로 user_id를 받아 해당 user의 프로필을 조회하는 api입니다", responses = {
+			@ApiResponse(responseCode = "200", description = "성공"),
+			@ApiResponse(responseCode = "400", description = "파라미터 오류"),
+			@ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다")
+	})
 	public ResponseEntity<UserProfileResponseDTO> getUserProfile(@PathVariable Long userId){
 		UserProfileResponseDTO userProfile = userService.getUserProfile(userId);
 		return ResponseEntity.ok(userProfile);
