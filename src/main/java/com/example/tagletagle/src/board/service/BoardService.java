@@ -9,7 +9,7 @@ import com.example.tagletagle.src.board.dto.*;
 
 import com.example.tagletagle.src.board.repository.*;
 import com.example.tagletagle.src.tag.dto.TagDTO;
-import com.example.tagletagle.src.user.dto.SearchResponseDTO;
+import com.example.tagletagle.src.board.dto.SearchResponseDTO;
 
 import com.example.tagletagle.src.board.entity.SearchHistoryEntity;
 

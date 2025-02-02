@@ -1,14 +1,11 @@
-package com.example.tagletagle.src.user.dto;
+package com.example.tagletagle.src.board.dto;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import com.example.tagletagle.src.tag.dto.TagDTO;
-import io.swagger.v3.oas.annotations.media.Schema;
+import com.example.tagletagle.src.user.dto.UserProfileResponseDTO;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter

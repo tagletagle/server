@@ -1,7 +1,7 @@
 package com.example.tagletagle.src.board.controller;
 
 import com.example.tagletagle.src.board.dto.*;
-import com.example.tagletagle.src.user.dto.SearchResponseDTO;
+import com.example.tagletagle.src.board.dto.SearchResponseDTO;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.tagletagle.src.user.dto.FollowsDTO;
