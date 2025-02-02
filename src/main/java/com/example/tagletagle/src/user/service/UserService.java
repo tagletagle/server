@@ -6,6 +6,7 @@ import com.example.tagletagle.src.user.dto.UserProfileResponseDTO;
 import com.example.tagletagle.src.tag.entity.TagEntity;
 import com.example.tagletagle.src.user.dto.FollowsDTO;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.tagletagle.base.BaseException;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 public class UserService {
 
 	//유효성 검사
+	@Autowired
 	private final UserRepository userRepository;
 	private final FollowsRepository followsRepository;
 
@@ -121,6 +123,5 @@ public class UserService {
 
 		return followsDTO;
 	}
-
 
 }

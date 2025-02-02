@@ -18,7 +18,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
 	boolean existsUserEntityByNickname(String nickname);
 
-	@Query("SELECT u FROM UserEntity u WHERE u.nickname LIKE %:word%")
-	List<UserEntity> findUsersByNickname(@Param("word") String word);
+	List<UserEntity> findByNicknameContainingOrUsernameContainingOrDescriptionContaining(String nickname, String username, String description);
 
 }

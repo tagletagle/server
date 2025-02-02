@@ -1,19 +1,19 @@
 package com.example.tagletagle.src.board.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.example.tagletagle.src.board.dto.*;
 
 import com.example.tagletagle.src.board.repository.*;
-import org.apache.catalina.User;
+import com.example.tagletagle.src.tag.dto.TagDTO;
+import com.example.tagletagle.src.user.dto.SearchResponseDTO;
 
 import com.example.tagletagle.src.board.entity.SearchHistoryEntity;
-import com.example.tagletagle.src.board.repository.*;
-import com.example.tagletagle.src.user.dto.FollowsDTO;
-import com.example.tagletagle.src.user.entity.FollowsEntity;
 
+import com.example.tagletagle.src.user.dto.UserProfileResponseDTO;
 import org.springframework.stereotype.Service;
 
 import com.example.tagletagle.base.BaseException;
@@ -43,7 +43,6 @@ public class BoardService {
 	private final PostTagRepository postTagRepository;
 	private final PostLikeRepository postLikeRepository;
 	private final PostScrapRepository postScrapRepository;
-
 
 	private final SearchHistoryRepository searchHistoryRepository;
 
@@ -235,5 +234,24 @@ public class BoardService {
 		return searchHistoryDTO;
 	}
 
+	public SearchResponseDTO getSearchResultList(String keyword) {
+
+		if (keyword == null || keyword.trim().isEmpty()) {
+			return new SearchResponseDTO(Collections.emptyList(), Collections.emptyList()); // 빈 리스트 반환
+		}
+
+		List<TagDTO> tags = tagRepository.findByNameContaining(keyword)
+				.stream()
+				.map(tag -> new TagDTO(tag.getId(), tag.getName()))
+				.collect(Collectors.toList());
+
+		List<UserProfileResponseDTO> users = userRepository.findByNicknameContainingOrUsernameContainingOrDescriptionContaining(keyword, keyword, keyword)
+				.stream()
+				.map(user -> new UserProfileResponseDTO(user.getId(), user.getNickname(), user.getUsername(),
+						user.getDescription(), user.getFollowerCount(), user.getFollowingCount(), user.getProfileImgUrl()))
+				.collect(Collectors.toList());
+
+		return new SearchResponseDTO(tags, users);
+	}
 
 }

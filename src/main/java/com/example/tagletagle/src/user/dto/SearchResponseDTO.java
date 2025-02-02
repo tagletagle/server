@@ -1,7 +1,9 @@
 package com.example.tagletagle.src.user.dto;
 
 import java.time.LocalDate;
+import java.util.List;
 
+import com.example.tagletagle.src.tag.dto.TagDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,14 +15,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 
-public class UserProfileResponseDTO {
-
-    private Long id;
-    private String nickname;
-    private String username;
-    private String description;
-    private Long follower_count;
-    private Long following_count;
-    private String profileImgUrl;
-
+public class SearchResponseDTO {
+    private List<TagDTO> tags;
+    private List<UserProfileResponseDTO> users;
 }

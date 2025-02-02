@@ -1,19 +1,16 @@
 package com.example.tagletagle.src.tag.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor  // 기본 생성자 추가
 
 public class TagDTO {
     private Long id;
     private String name;
-
-    public TagDTO(Long id, String name) {  // 생성자로 값 할당
-        this.id = id;
-        this.name = name;
-    }
 }
