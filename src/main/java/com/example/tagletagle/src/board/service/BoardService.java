@@ -22,6 +22,7 @@ import com.example.tagletagle.config.Status;
 import com.example.tagletagle.src.board.entity.PostEntity;
 import com.example.tagletagle.src.board.entity.PostLikeEntity;
 import com.example.tagletagle.src.board.entity.PostScrapEntity;
+import com.example.tagletagle.src.notification.repository.NotificationTempRepository;
 import com.example.tagletagle.src.tag.entity.PostTagEntity;
 import com.example.tagletagle.src.tag.entity.TagEntity;
 import com.example.tagletagle.src.tag.repository.PostTagRepository;
@@ -45,6 +46,7 @@ public class BoardService {
 	private final PostScrapRepository postScrapRepository;
 	private final JsoupMetadataService jsoupMetadataService;
 	private final SeleniumMetadataService seleniumMetadataService;
+	private final NotificationTempRepository notificationTempRepository;
 
 
 	private final SearchHistoryRepository searchHistoryRepository;
@@ -113,6 +115,9 @@ public class BoardService {
 		}
 
 		postTagRepository.saveAll(postTagEntityList);
+
+		List<Long> followerIdList = notificationTempRepository.findFollowerIds(userId);
+		notificationTempRepository.insertNotificationsBySave(userId, post.getId(), followerIdList);
 
 	}
 

@@ -52,7 +52,7 @@ public class UserService {
 		UserEntity user = userRepository.findUserEntityByIdAndStatus(userId, Status.ACTIVE)
 			.orElseThrow(()->new BaseException(BaseResponseStatus.USER_NO_EXIST));
 
-		UserEntity followingUser = userRepository.findUserEntityByIdAndStatus(userId, Status.ACTIVE)
+		UserEntity followingUser = userRepository.findUserEntityByIdAndStatus(followingUserId, Status.ACTIVE)
 			.orElseThrow(()->new BaseException(BaseResponseStatus.USER_NO_EXIST));
 
 		Boolean isFollow = followsRepository.existsByFollowerAndFollowing(user, followingUser);
