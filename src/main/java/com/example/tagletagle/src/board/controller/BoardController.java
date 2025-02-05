@@ -78,6 +78,28 @@ public class BoardController {
 
 	}
 
+	@Operation(summary = "최신 게시글 조회 api", description = "게시글을 작성 날짜 최신순으로 정렬해 상위 5개를 반환", responses = {
+			@ApiResponse(responseCode = "200", description = "성공"),
+			@ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다"),
+			@ApiResponse(responseCode = "500", description = "게시글이 존재하지 않습니다."),
+	})
+	@GetMapping("/api/board/post/new")
+	public ResponseEntity<BaseResponse<PostsDTO>> getNewPosts(){
+		try{
+			Long userId = SecurityUtil.getCurrentUserId()
+					.orElseThrow(() -> new BaseException(BaseResponseStatus.REQUIRED_LOGIN));
+
+			PostsDTO postsDTO = boardService.getNewPosts(userId);
+
+			return ResponseEntity.ok(new BaseResponse<>(postsDTO));
+
+		}catch (BaseException e){
+			HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+			return ResponseEntity.status(httpStatus).body(new BaseResponse<>(e.getStatus()));
+		}
+
+	}
+
 	@GetMapping("/api/board/post/user/{author_id}/tag/{tag_id}")
 	@Operation(summary = "게시글 리스트 조회(특정 userId, 특정 태그) api", description = "url에 author_id와 tag_name을 적어 해당 author_id의 user가 작성한 게시글 중 특정 태그가 포함된 게시글 리스트를 조회합니다", responses = {
 		@ApiResponse(responseCode = "200", description = "성공"),

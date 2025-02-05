@@ -190,6 +190,26 @@ public class BoardService {
 
 	}
 
+	public  PostsDTO getNewPosts(Long userId){
+
+		UserEntity user = userRepository.findUserEntityByIdAndStatus(userId, Status.ACTIVE)
+				.orElseThrow(()->new BaseException(BaseResponseStatus.USER_NO_EXIST));
+
+		UserEntity author = userRepository.findUserEntityByIdAndStatus(userId, Status.ACTIVE)
+				.orElseThrow(()->new BaseException(BaseResponseStatus.AUTHOR_NO_EXIST));
+
+		PostsDTO postsDTO = new PostsDTO();
+		List<PostInfoDTO> postInfoDTOList = boardRepository.findNewPosts(userId);
+		if(postInfoDTOList.size() == 0){
+			return postsDTO;
+		}
+
+
+		postsDTO.setPostInfoDTOList(postInfoDTOList);
+
+		return postsDTO;
+	}
+
 	public List<SearchHistoryDTO> getUserSearchHistory(Long userId) {
 		return searchHistoryRepository.findSearchHistoryEntitiesByUser_Id(userId).stream()
 				.map(this:: convertToSearchHistoryDTO)
