@@ -2,6 +2,7 @@ package com.example.tagletagle.meta;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class MetadataController {
 
 	private final MetadataService metadataService;
+	private final JsoupMetadataService jsoupMetadataService;
 
-	public MetadataController(MetadataService metadataService) {
+	public MetadataController(MetadataService metadataService, JsoupMetadataService jsoupMetadataService) {
+
 		this.metadataService = metadataService;
+		this.jsoupMetadataService = jsoupMetadataService;
 	}
 
 	// 1️⃣ 단일 URL 메타데이터 가져오기
@@ -27,6 +31,20 @@ public class MetadataController {
 		Map<String, String> metadata = metadataService.fetchMetadata(url);
 		return ResponseEntity.ok(metadata);
 	}
+
+	// 단일 URL 메타데이터를 비동기 방식으로 가져오기
+	@GetMapping("/async")
+	public ResponseEntity<CompletableFuture<Map<String, String>>> getMetadataAsync(@RequestParam("url") String url) {
+		CompletableFuture<Map<String, String>> metadata = metadataService.fetchMetadataAsync(url);
+		return ResponseEntity.ok(metadata);
+	}
+
+	@GetMapping("/jsoup")
+	public ResponseEntity<Map<String, String>> getJsoupMetadta(@RequestParam("url")String url){
+		Map<String, String> metadata = jsoupMetadataService.fetchMetadata(url);
+		return ResponseEntity.ok(metadata);
+	}
+
 /*	@PostMapping
 	public ResponseEntity<Map<String, String>> getMetadata(@RequestBody Map<String, String> requestBody) {
 		String url = requestBody.get("url"); // JSON에서 "url" 값을 추출

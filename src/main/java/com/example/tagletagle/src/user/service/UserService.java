@@ -3,7 +3,6 @@ package com.example.tagletagle.src.user.service;
 
 import com.example.tagletagle.src.user.dto.UserProfileResponseDTO;
 
-import com.example.tagletagle.src.tag.entity.TagEntity;
 import com.example.tagletagle.src.user.dto.FollowsDTO;
 
 import org.springframework.stereotype.Service;

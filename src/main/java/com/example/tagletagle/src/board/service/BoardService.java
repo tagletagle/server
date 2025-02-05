@@ -7,12 +7,8 @@ import java.util.stream.Collectors;
 import com.example.tagletagle.src.board.dto.*;
 
 import com.example.tagletagle.src.board.repository.*;
-import org.apache.catalina.User;
 
 import com.example.tagletagle.src.board.entity.SearchHistoryEntity;
-import com.example.tagletagle.src.board.repository.*;
-import com.example.tagletagle.src.user.dto.FollowsDTO;
-import com.example.tagletagle.src.user.entity.FollowsEntity;
 
 import org.springframework.stereotype.Service;
 

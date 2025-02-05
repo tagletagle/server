@@ -15,6 +15,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 
@@ -83,9 +84,11 @@ public class MetadataService {
 			driver.get(url);
 
 			if (url.contains("blog.naver.com")) {
-				metadata = fetchNaverBlogMetadata(driver);
+				//metadata = fetchNaverBlogMetadata(driver);
+				metadata = fetchOpenGraphMetadata(driver);
 			} else if (url.contains("tistory.com")) {
-				metadata = fetchTistoryMetadata(driver);
+				//metadata = fetchTistoryMetadata(driver);
+				metadata = fetchOpenGraphMetadata(driver);
 			} else {
 				metadata = fetchOpenGraphMetadata(driver);
 			}
@@ -97,6 +100,33 @@ public class MetadataService {
 			}
 		}
 		return metadata;
+	}
+
+	@Async // 비동기 실행
+	public CompletableFuture<Map<String, String>> fetchMetadataAsync(String url) {
+		WebDriver driver = null;
+		Map<String, String> metadata;
+
+		try {
+			driver = WebDriverPool.getDriver(); // WebDriver 풀에서 가져오기
+			driver.get(url);
+
+			if (url.contains("blog.naver.com")) {
+				metadata = fetchNaverBlogMetadata(driver);
+			} else if (url.contains("tistory.com")) {
+				metadata = fetchTistoryMetadata(driver);
+			} else {
+				metadata = fetchOpenGraphMetadata(driver);
+			}
+		} catch (Exception e) {
+			metadata = Map.of("error", "Failed to fetch metadata: " + e.getMessage());
+		} finally {
+			if (driver != null) {
+				WebDriverPool.releaseDriver(driver);
+			}
+		}
+
+		return CompletableFuture.completedFuture(metadata); // 비동기 결과 반환
 	}
 
 
