@@ -1,36 +1,18 @@
 package com.example.tagletagle.meta;
 
-import java.time.Duration;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-
-import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.springframework.stereotype.Service;
-
-import java.time.Duration;
-import java.util.*;
 import java.util.concurrent.*;
-import java.util.concurrent.TimeoutException;
 
 @Service
-public class MetadataService {
+public class SeleniumMetadataService {
 
 	// 메타데이터 가져오기 (네이버/티스토리 예외 처리 포함)
 	/*public Map<String, String> fetchMetadata(String url) {

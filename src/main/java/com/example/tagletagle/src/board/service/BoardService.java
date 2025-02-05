@@ -2,8 +2,12 @@ package com.example.tagletagle.src.board.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import com.example.tagletagle.meta.JsoupMetadataService;
+import com.example.tagletagle.meta.SeleniumMetadataService;
 import com.example.tagletagle.src.board.dto.*;
 
 import com.example.tagletagle.src.board.repository.*;
@@ -39,6 +43,8 @@ public class BoardService {
 	private final PostTagRepository postTagRepository;
 	private final PostLikeRepository postLikeRepository;
 	private final PostScrapRepository postScrapRepository;
+	private final JsoupMetadataService jsoupMetadataService;
+	private final SeleniumMetadataService seleniumMetadataService;
 
 
 	private final SearchHistoryRepository searchHistoryRepository;
@@ -50,7 +56,43 @@ public class BoardService {
 		UserEntity user = userRepository.findUserEntityByIdAndStatus(userId, Status.ACTIVE)
 			.orElseThrow(()->new BaseException(BaseResponseStatus.USER_NO_EXIST));
 
-		PostEntity post = new PostEntity(createPostDTO, user);
+		PostEntity post = null;
+
+		if(createPostDTO.getUrl().contains("instagram.com") || createPostDTO.getUrl().contains("twitter.com")
+			|| createPostDTO.getUrl().contains("x.com") || createPostDTO.getUrl().contains("tiktok.com")){
+			CompletableFuture<Map<String, String>> future = seleniumMetadataService.fetchMetadataAsync(createPostDTO.getUrl());
+			Map<String, String> metadata = future.join();
+
+			if(createPostDTO.getTitle() == null){
+				post = new PostEntity(createPostDTO, user, metadata.get("title"), metadata.get("image"), metadata.get("author") );
+			}else{
+				post = new PostEntity(createPostDTO, user, metadata.get("image"), metadata.get("author") );
+			}
+
+			System.out.println("1111111" + metadata.get("title"));
+			System.out.println("222222" + metadata.get("image"));
+			System.out.println("333333" + metadata.get("author"));
+
+		}
+		else{
+			Map<String, String> metadata = jsoupMetadataService.fetchMetadata(createPostDTO.getUrl());
+
+
+			if(createPostDTO.getTitle() == null || createPostDTO.getTitle().isBlank()){
+				System.out.println("진입!!!!");
+				post = new PostEntity(createPostDTO, user, metadata.get("title"), metadata.get("image"), metadata.get("author") );
+			}else{
+				post = new PostEntity(createPostDTO, user, metadata.get("image"), metadata.get("author") );
+			}
+
+			System.out.println("1111111" + metadata.get("title"));
+			System.out.println("222222" + metadata.get("image"));
+			System.out.println("333333" + metadata.get("author"));
+
+
+		}
+
+
 		postRepository.save(post);
 
 		List<Long> tagList = createPostDTO.getTagIdList();

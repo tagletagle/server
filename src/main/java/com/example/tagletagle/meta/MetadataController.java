@@ -1,14 +1,10 @@
 package com.example.tagletagle.meta;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,32 +12,38 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/metadata")
 public class MetadataController {
 
-	private final MetadataService metadataService;
+	private final SeleniumMetadataService seleniumMetadataService;
 	private final JsoupMetadataService jsoupMetadataService;
 
-	public MetadataController(MetadataService metadataService, JsoupMetadataService jsoupMetadataService) {
+	public MetadataController(SeleniumMetadataService seleniumMetadataService, JsoupMetadataService jsoupMetadataService) {
 
-		this.metadataService = metadataService;
+		this.seleniumMetadataService = seleniumMetadataService;
 		this.jsoupMetadataService = jsoupMetadataService;
 	}
 
 	// 1️⃣ 단일 URL 메타데이터 가져오기
 	@GetMapping()
 	public ResponseEntity<Map<String, String>> getMetadata(@RequestParam("url") String url) {
-		Map<String, String> metadata = metadataService.fetchMetadata(url);
+		Map<String, String> metadata = seleniumMetadataService.fetchMetadata(url);
 		return ResponseEntity.ok(metadata);
 	}
 
 	// 단일 URL 메타데이터를 비동기 방식으로 가져오기
 	@GetMapping("/async")
 	public ResponseEntity<CompletableFuture<Map<String, String>>> getMetadataAsync(@RequestParam("url") String url) {
-		CompletableFuture<Map<String, String>> metadata = metadataService.fetchMetadataAsync(url);
+		CompletableFuture<Map<String, String>> metadata = seleniumMetadataService.fetchMetadataAsync(url);
+		System.out.println(metadata.join().get("title"));
+		System.out.println(metadata.join().get("image"));
+
+
 		return ResponseEntity.ok(metadata);
 	}
 
 	@GetMapping("/jsoup")
 	public ResponseEntity<Map<String, String>> getJsoupMetadta(@RequestParam("url")String url){
 		Map<String, String> metadata = jsoupMetadataService.fetchMetadata(url);
+
+
 		return ResponseEntity.ok(metadata);
 	}
 
