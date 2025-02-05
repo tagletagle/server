@@ -29,7 +29,7 @@ public class TagController {
     private final TagService tagService;
 
     @GetMapping("/api/tag/fullList")
-    @Operation(summary = "전체 태그 목록 조회 api", description = "현재 선택 가능한 모든 태그 리스트를 보여주는 api 입니다", responses = {
+    @Operation(summary = "전체 태그 목록 조회 api - 윤아", description = "현재 선택 가능한 모든 태그 리스트를 보여주는 api 입니다", responses = {
         @ApiResponse(responseCode = "200", description = "성공"),
         @ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다")
     })
@@ -49,7 +49,7 @@ public class TagController {
     }
 
     @GetMapping("/api/tag/interests")
-    @Operation(summary = "관심있는 태그 목록 조회 api", description = "url로 user_id를 받아 해당 user의 관심있는 태그 목록을 조회하는 api입니다", responses = {
+    @Operation(summary = "관심있는 태그 목록 조회 api - 윤아", description = "url로 user_id를 받아 해당 user의 관심있는 태그 목록을 조회하는 api입니다", responses = {
         @ApiResponse(responseCode = "200", description = "성공"),
         @ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다")
     })

@@ -38,7 +38,7 @@ public class AuthController {
 
 	//TODO scheduler을 통해 기간이 지난 refresh data 정리하기
 	@PostMapping("/reissue")
-	@Operation(summary = "새로 accessToken과 refreshToken을 발급해주는 api", description = "유효한 refreshToken을 가지고 있어야 작동", responses = {
+	@Operation(summary = "새로 accessToken과 refreshToken을 발급해주는 api - 준현", description = "유효한 refreshToken을 가지고 있어야 작동", responses = {
 		@ApiResponse(responseCode = "200", description = "성공"),
 		@ApiResponse(responseCode = "400", description = "파라미터 오류"),
 		@ApiResponse(responseCode = "401", description = "refresh 토큰이 만료되었습니다"),
@@ -57,7 +57,7 @@ public class AuthController {
 	}
 
 	@PostMapping("/logout")
-	@Operation(summary = "로그아웃 api", description = "refresh 토큰 유효성 검사 후 refresh storage에서 토큰 삭제", responses = {
+	@Operation(summary = "로그아웃 api - 준현", description = "refresh 토큰 유효성 검사 후 refresh storage에서 토큰 삭제", responses = {
 		@ApiResponse(responseCode = "200", description = "성공"),
 		@ApiResponse(responseCode = "400", description = "파라미터 오류"),
 		@ApiResponse(responseCode = "401", description = "refresh 토큰이 만료되었습니다"),
