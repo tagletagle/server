@@ -53,8 +53,8 @@ public class NotificationTempRepository {
 	// 게시글 저장 시 알림 생성
 	public void insertNotificationsBySave(Long relatedUserId, Long relatedPostId, List<Long> followerIdList){
 
-		String sql = "INSERT INTO notification (related_user_id, related_post_id, notification_type) " +
-			"SELECT :relatedUserId, :relatedPostId, :notificationType FROM user WHERE id IN (:ids)";
+		String sql = "INSERT INTO notification (related_user_id, related_post_id, notification_type, user_id) " +
+			"SELECT :relatedUserId, :relatedPostId, :notificationType, id FROM user WHERE id IN (:ids)";
 
 		Map<String, Object> params = new HashMap<>();
 		params.put("relatedUserId", relatedUserId);
