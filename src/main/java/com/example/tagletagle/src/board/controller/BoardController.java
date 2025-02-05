@@ -42,12 +42,12 @@ public class BoardController {
 
 	private final BoardService boardService;
 
+	@PostMapping("/api/board/post")
 	@Operation(summary = "게시글 작성 api - 준현", description = "프론트에서 createPostDTO에 해당하는 값을 넘겨받아 게시글을 작성합니다", responses = {
 		@ApiResponse(responseCode = "200", description = "성공"),
 		@ApiResponse(responseCode = "400", description = "파라미터 오류"),
 		@ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다")
 	})
-	@PostMapping("/api/board/post")
 	public ResponseEntity<BaseResponse<String>> createPost(@Valid @RequestBody CreatePostDTO createPostDTO){
 		try{
 			Long userId = SecurityUtil.getCurrentUserId()
@@ -64,12 +64,13 @@ public class BoardController {
 
 	}
 
+
+	@GetMapping("/api/board/post/user/{author_id}")
 	@Operation(summary = "게시글 리스트 조회(특정 userId에 대한) api - 준현", description = "url에 author_id를 적어 해당 id의 user가 작성한 게시글 리스트를 조회합니다", responses = {
 		@ApiResponse(responseCode = "200", description = "성공"),
 		@ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다"),
 		@ApiResponse(responseCode = "500", description = "저자가 존재하지 않습니다"),
 	})
-	@GetMapping("/api/board/post/user/{author_id}")
 	public ResponseEntity<BaseResponse<PostsDTO>> getPostsByUser(@PathVariable("author_id")Long authorId){
 		try{
 			Long userId = SecurityUtil.getCurrentUserId()

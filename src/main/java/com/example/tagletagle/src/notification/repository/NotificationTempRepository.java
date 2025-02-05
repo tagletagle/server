@@ -14,6 +14,9 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.example.tagletagle.config.NotificationType;
+import com.example.tagletagle.src.notification.dto.NotificationInfoDTO;
+
 @Repository
 public class NotificationTempRepository {
 
@@ -50,11 +53,38 @@ public class NotificationTempRepository {
 		return followerIdList;
 	}
 
+	public List<NotificationInfoDTO> findNotificationInfoList(Long userId){
+
+		String sql = "SELECT * from notification AS n " +
+			"WHERE n.user_id = ?";
+
+		List<NotificationInfoDTO> notificationInfoDTOList = jdbcTemplate.query(sql,
+			new RowMapper<NotificationInfoDTO>() {
+				@Override
+				public NotificationInfoDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+					NotificationType notificationType = NotificationType.valueOf(rs.getString("notification_type"));
+					Long relatedUserId = rs.getLong("related_user_id");
+					Long relatedPostId = rs.getLong("related_post_id");
+					Boolean isRead = rs.getBoolean("is_read");
+
+					return new NotificationInfoDTO(notificationType, relatedUserId, relatedPostId, isRead);
+				}
+			},
+			userId
+
+		);
+
+		return notificationInfoDTOList;
+
+	}
+
+
 	// 게시글 저장 시 알림 생성
 	public void insertNotificationsBySave(Long relatedUserId, Long relatedPostId, List<Long> followerIdList){
 
-		String sql = "INSERT INTO notification (related_user_id, related_post_id, notification_type, user_id) " +
-			"SELECT :relatedUserId, :relatedPostId, :notificationType, id FROM user WHERE id IN (:ids)";
+		String sql = "INSERT INTO notification (related_user_id, related_post_id, notification_type, user_id, is_read) " +
+			"SELECT :relatedUserId, :relatedPostId, :notificationType, id, false FROM user WHERE id IN (:ids)";
+
 
 		Map<String, Object> params = new HashMap<>();
 		params.put("relatedUserId", relatedUserId);
