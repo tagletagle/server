@@ -106,8 +106,14 @@ public class UserService {
 				.orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
 	}
 
-	public List<FollowsDTO> getFollowingUsers(Long follower) {
-		return followsRepository.findFollowingByFollower(follower).stream()
+	public List<FollowsDTO> getFollowingUsers(Long user_id) {
+		return followsRepository.findFollowingByFollower(user_id).stream()
+				.map(this::convertToFollowsDTO)
+				.collect(Collectors.toList());
+	}
+
+	public List<FollowsDTO> getFollowerUsers(Long following_user_id) {
+		return followsRepository.findFollowerByFollowing(following_user_id).stream()
 				.map(this::convertToFollowsDTO)
 				.collect(Collectors.toList());
 	}

@@ -70,6 +70,9 @@ public class UserController {
 
 			String comment = userService.followUser(userId, followingUserId);
 
+			System.out.println("userId : " + userId); //팔로잉 하는 사람(팔로워)
+			System.out.println("followingUserId : " + followingUserId); //팔로잉 당하는 사람
+
 			return ResponseEntity.ok(new BaseResponse<>(comment));
 
 		}catch (BaseException e){
@@ -112,7 +115,7 @@ public class UserController {
 
 
 	@GetMapping("/api/user/following/{follower}")
-	@Operation(summary = "팔로워 목록을 조회하는 api", description = "url로 user_id를 받아 해당 user의 팔로워 목록을 조회하는 api입니다", responses = {
+	@Operation(summary = "팔로잉 목록을 조회하는 api", description = "url로 user_id를 받아 해당 user의 팔로잉 목록을 조회하는 api입니다", responses = {
 		@ApiResponse(responseCode = "200", description = "성공"),
 		@ApiResponse(responseCode = "400", description = "파라미터 오류"),
 		@ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다")
@@ -126,6 +129,19 @@ public class UserController {
 		}
 	}
 
-
+	@GetMapping("/api/user/follower/{following_user_id}")
+	@Operation(summary = "팔로워 목록을 조회하는 api", description = "url로 user_id를 받아 해당 user의 팔로워 목록을 조회하는 api입니다", responses = {
+			@ApiResponse(responseCode = "200", description = "성공"),
+			@ApiResponse(responseCode = "400", description = "파라미터 오류"),
+			@ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다")
+	})
+	public ResponseEntity<BaseResponse<List<FollowsDTO>>> getFollowerList(@PathVariable Long following_user_id) {
+		try{
+			return ResponseEntity.ok(new BaseResponse<>(userService.getFollowerUsers(following_user_id)));
+		}catch (BaseException e) {
+			HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+			return ResponseEntity.status(httpStatus).body(new BaseResponse<>(e.getStatus()));
+		}
+	}
 
 }
