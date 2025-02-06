@@ -38,6 +38,12 @@ public class PostEntity extends BaseEntity {
 	@Column
 	private String url;
 
+	@Column
+	private String author;
+
+	@Column(columnDefinition = "TEXT")
+	private String image;
+
 	@Column(name = "comment_count", nullable = false)
 	private Long commentCount;
 
@@ -54,6 +60,28 @@ public class PostEntity extends BaseEntity {
 	public PostEntity(CreatePostDTO createPostDTO, UserEntity user){
 		this.title = createPostDTO.getTitle();
 		this.url = createPostDTO.getUrl();
+		this.commentCount = 0L;
+		this.likeCount = 0L;
+		this.scrapCount = 0L;
+		this.user = user;
+	}
+
+	public PostEntity(CreatePostDTO createPostDTO, UserEntity user, String title ,String image, String author){
+		this.title = title;
+		this.url = createPostDTO.getUrl();
+		this.image = image;
+		this.author = author;
+		this.commentCount = 0L;
+		this.likeCount = 0L;
+		this.scrapCount = 0L;
+		this.user = user;
+	}
+
+	public PostEntity(CreatePostDTO createPostDTO, UserEntity user, String image, String author){
+		this.title = createPostDTO.getTitle();
+		this.url = createPostDTO.getUrl();
+		this.image = image;
+		this.author = author;
 		this.commentCount = 0L;
 		this.likeCount = 0L;
 		this.scrapCount = 0L;

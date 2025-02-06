@@ -53,4 +53,12 @@ public class NotificationEntity extends BaseEntity {
 
 	@Column(name = "is_read")
 	private Boolean isRead = Boolean.FALSE;
+
+	public NotificationEntity(NotificationType notificationType, UserEntity user, UserEntity relatedUser){
+		this.notificationType = notificationType;
+		this.user = user;
+		this.relatedUser = relatedUser;
+		this.isRead = Boolean.FALSE;
+	}
+
 }
