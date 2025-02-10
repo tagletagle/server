@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.example.tagletagle.src.board.dto.*;
-import com.example.tagletagle.src.board.entity.SearchHistoryEntity;
+import com.example.tagletagle.src.board.entity.*;
 import com.example.tagletagle.src.board.repository.*;
 import com.example.tagletagle.src.user.dto.FollowsDTO;
 import com.example.tagletagle.src.user.entity.FollowsEntity;
@@ -14,9 +14,6 @@ import org.springframework.stereotype.Service;
 import com.example.tagletagle.base.BaseException;
 import com.example.tagletagle.base.BaseResponseStatus;
 import com.example.tagletagle.config.Status;
-import com.example.tagletagle.src.board.entity.PostEntity;
-import com.example.tagletagle.src.board.entity.PostLikeEntity;
-import com.example.tagletagle.src.board.entity.PostScrapEntity;
 import com.example.tagletagle.src.tag.entity.PostTagEntity;
 import com.example.tagletagle.src.tag.entity.TagEntity;
 import com.example.tagletagle.src.tag.repository.PostTagRepository;
@@ -39,6 +36,8 @@ public class BoardService {
 	private final PostLikeRepository postLikeRepository;
 	private final PostScrapRepository postScrapRepository;
 	private final SearchHistoryRepository searchHistoryRepository;
+	private final CommentRepository commentRepository;
+
 
 	@Transactional
 	public void createPost(Long userId, CreatePostDTO createPostDTO) {
@@ -225,5 +224,20 @@ public class BoardService {
 
 		return searchHistoryDTO;
 	}
+
+	public void createComment(Long userId, Long postId, CreateCommentDTO createCommentDTO) {
+
+		UserEntity user = userRepository.findUserEntityByIdAndStatus(userId, Status.ACTIVE)
+				.orElseThrow(()->new BaseException(BaseResponseStatus.USER_NO_EXIST));
+
+		PostEntity post = postRepository.findPostEntityById(postId)
+				.orElseThrow(()->new BaseException(BaseResponseStatus.POST_NO_EXIST));
+
+		CommentEntity comment = new CommentEntity(createCommentDTO, user,post);
+		commentRepository.save(comment);
+
+	}
+
+
 
 }

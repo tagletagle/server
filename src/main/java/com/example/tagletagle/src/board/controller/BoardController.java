@@ -1,6 +1,6 @@
 package com.example.tagletagle.src.board.controller;
 
-import com.example.tagletagle.src.board.dto.SearchHistoryDTO;
+import com.example.tagletagle.src.board.dto.*;
 import com.example.tagletagle.src.user.dto.FollowsDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.tagletagle.base.BaseException;
 import com.example.tagletagle.base.BaseResponse;
 import com.example.tagletagle.base.BaseResponseStatus;
-import com.example.tagletagle.src.board.dto.CommentsDTO;
-import com.example.tagletagle.src.board.dto.CreatePostDTO;
-import com.example.tagletagle.src.board.dto.PostsDTO;
 import com.example.tagletagle.src.board.service.BoardService;
 import com.example.tagletagle.src.user.dto.UserBasicInfoDTO;
 import com.example.tagletagle.utils.SecurityUtil;
@@ -203,6 +200,28 @@ public class BoardController {
 				.orElseThrow(() -> new BaseException(BaseResponseStatus.REQUIRED_LOGIN));
 
 		return boardService.getUserSearchHistory(userId);
+
+	}
+
+	@Operation(summary = "게시글 작성 api", description = "CreateComment에 대한 DTO 넘겨받아 게시글 작성", responses = {
+			@ApiResponse(responseCode = "200", description = "성공"),
+			@ApiResponse(responseCode = "400", description = "파라미터 오류"),
+			@ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다")
+	})
+	@PostMapping("/api/board/comment/{post_id}")
+	public ResponseEntity<BaseResponse<String>> createComment(@Valid @RequestBody CreateCommentDTO createCommentDTO, @PathVariable("post_id")Long postId){
+		try{
+			Long userId = SecurityUtil.getCurrentUserId()
+					.orElseThrow(() -> new BaseException(BaseResponseStatus.REQUIRED_LOGIN));
+
+			boardService.createComment(userId, postId, createCommentDTO);
+
+			return ResponseEntity.ok(new BaseResponse<>("댓글이 생성되었습니다."));
+
+		}catch (BaseException e){
+			HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+			return ResponseEntity.status(httpStatus).body(new BaseResponse<>(e.getStatus()));
+		}
 
 	}
 
