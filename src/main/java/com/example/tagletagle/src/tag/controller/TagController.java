@@ -1,12 +1,21 @@
 package com.example.tagletagle.src.tag.controller;
 
+import com.example.tagletagle.base.BaseException;
+import com.example.tagletagle.base.BaseResponse;
+import com.example.tagletagle.base.BaseResponseStatus;
 import com.example.tagletagle.src.tag.dto.TagDTO;
 import com.example.tagletagle.src.tag.dto.TagInterestsDTO;
 import com.example.tagletagle.src.tag.dto.TagResponseDTO;
 import com.example.tagletagle.src.tag.service.TagService;
+import com.example.tagletagle.utils.SecurityUtil;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -55,6 +64,13 @@ public class TagController {
         try{
             Long userId = SecurityUtil.getCurrentUserId()
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.REQUIRED_LOGIN));
+            return ResponseEntity.ok(new BaseResponse<>(tagService. getUserTagInterests(UserId)));
+        }catch (BaseException e){
+            HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+            return ResponseEntity.status(httpStatus).body(new BaseResponse<>(e.getStatus()));
+        }
+
+    }
 
 
     //태그 취향정보 입력
