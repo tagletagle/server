@@ -3,18 +3,15 @@ package com.example.tagletagle.src.tag.controller;
 import com.example.tagletagle.base.BaseException;
 import com.example.tagletagle.base.BaseResponse;
 import com.example.tagletagle.base.BaseResponseStatus;
-import com.example.tagletagle.src.board.dto.CommentsDTO;
 import com.example.tagletagle.src.tag.dto.TagDTO;
 import com.example.tagletagle.src.tag.dto.TagInterestsDTO;
 import com.example.tagletagle.src.tag.service.TagService;
-import com.example.tagletagle.src.user.dto.FollowsDTO;
 import com.example.tagletagle.utils.SecurityUtil;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -66,6 +63,20 @@ public class TagController {
             return ResponseEntity.status(httpStatus).body(new BaseResponse<>(e.getStatus()));
         }
 
+
+    }
+
+    @PostMapping("/api/tag/request")
+    public ResponseEntity<BaseResponse<String>> createComment(@Valid @RequestBody TagDTO tagDTO){
+        try{
+
+            tagService.tagRequest(tagDTO) ;
+            return ResponseEntity.ok(new BaseResponse<>("요청이 완료되었습니다.."));
+
+        }catch (BaseException e){
+            HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+            return ResponseEntity.status(httpStatus).body(new BaseResponse<>(e.getStatus()));
+        }
 
     }
 }

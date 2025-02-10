@@ -1,9 +1,11 @@
 package com.example.tagletagle.src.tag.entity;
 
+
+import com.example.tagletagle.src.tag.dto.TagDTO;
 import org.hibernate.annotations.DynamicInsert;
 
 import com.example.tagletagle.base.BaseEntity;
-import com.example.tagletagle.src.user.entity.UserEntity;
+
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,5 +35,9 @@ public class TagRequestEntity extends BaseEntity {
 
 	@Column
 	private String name;
+
+	public TagRequestEntity(TagDTO tagDTO){
+		this.name = tagDTO.getName();
+	}
 
 }
