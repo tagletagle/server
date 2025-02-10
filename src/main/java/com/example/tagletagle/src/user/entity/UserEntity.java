@@ -33,9 +33,6 @@ public class UserEntity extends BaseEntity {
 	@Column(nullable = false)
 	private String username;
 
-	@Column(nullable = false)
-	private String password;
-
 	//기본 정보 입력 시 적는 닉네임
 	@Column(nullable = true)
 	private String nickname;
@@ -51,6 +48,9 @@ public class UserEntity extends BaseEntity {
 	//기본 정보 입력 시 적는 성별
 	@Column(nullable = true)
 	private Character gender;
+
+	@Column(nullable = false)
+	private String password;
 
 	@Column
 	private String role;
@@ -72,7 +72,6 @@ public class UserEntity extends BaseEntity {
 		this.followerCount = 0L;
 		this.followingCount = 0L;
 	}
-
 
 
 	public UserEntity(String username){

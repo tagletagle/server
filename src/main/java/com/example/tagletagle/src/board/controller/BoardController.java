@@ -1,10 +1,13 @@
 package com.example.tagletagle.src.board.controller;
 
 
+import com.example.tagletagle.src.board.dto.*;
+import com.example.tagletagle.src.board.dto.SearchResponseDTO;
+
 import com.example.tagletagle.src.board.dto.BoardResponseDTO;
+
 import org.springframework.web.bind.annotation.*;
 
-import com.example.tagletagle.src.board.dto.SearchHistoryDTO;
 import com.example.tagletagle.src.user.dto.FollowsDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,13 +18,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-
 import com.example.tagletagle.base.BaseException;
 import com.example.tagletagle.base.BaseResponse;
 import com.example.tagletagle.base.BaseResponseStatus;
-import com.example.tagletagle.src.board.dto.CommentsDTO;
-import com.example.tagletagle.src.board.dto.CreatePostDTO;
-import com.example.tagletagle.src.board.dto.PostsDTO;
 import com.example.tagletagle.src.board.service.BoardService;
 import com.example.tagletagle.src.user.dto.UserBasicInfoDTO;
 import com.example.tagletagle.utils.SecurityUtil;
@@ -31,6 +30,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import javax.naming.directory.SearchResult;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -191,12 +192,11 @@ public class BoardController {
 
 	})
 	public ResponseEntity<List<BoardResponseDTO>> getHotBoard(
-			@RequestParam(required = false, defaultValue = "0") Long likeCount
+			@RequestParam(required = false, defaultValue = "5") Long likeCount
 	){
 		List<BoardResponseDTO> hotPosts = boardService.getHotBoard(likeCount);
 		return ResponseEntity.ok(hotPosts);
 	}
-
   
 	@GetMapping("/api/board/search/history")@Operation(summary = "검색 기록 조회 api - 윤아", description = "access Token의 user의 검색 기록을 가져옵니다", responses = {
 		@ApiResponse(responseCode = "200", description = "성공"),
@@ -211,4 +211,9 @@ public class BoardController {
 
 	}
 
+	@GetMapping("/api/board/search/result")
+	public ResponseEntity<SearchResponseDTO> getSearchResultList(@RequestParam("keyword") String keyword) {
+
+		return ResponseEntity.ok(boardService.getSearchResultList(keyword));
+    }
 }
