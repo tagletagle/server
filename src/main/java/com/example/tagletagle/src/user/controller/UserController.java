@@ -34,7 +34,7 @@ public class UserController {
 	private final UserService userService;
 
 	@PatchMapping("/api/user/basic/info")
-	@Operation(summary = "유저에 대한 기본정보를 작성/수정 api", description = "UserBasicInfoDTO를 받아 user의 기본 정보를 작성 및 수정 하는 api입니다", responses = {
+	@Operation(summary = "유저에 대한 기본정보를 작성/수정 api - 준현", description = "UserBasicInfoDTO를 받아 user의 기본 정보를 작성 및 수정 하는 api입니다", responses = {
 		@ApiResponse(responseCode = "200", description = "성공"),
 		@ApiResponse(responseCode = "400", description = "파라미터 오류"),
 		@ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다"),
@@ -57,7 +57,7 @@ public class UserController {
 	}
 
 	@PatchMapping("/api/user/following/{following_user_id}")
-	@Operation(summary = "팔로잉 설정/해제 api", description = "url로 following_user_id를 받아 로그인한 유저가 해당 following 유저를 팔로잉 설정/해제 하는 api입니다", responses = {
+	@Operation(summary = "팔로잉 설정/해제 api - 준현", description = "url로 following_user_id를 받아 로그인한 유저가 해당 following 유저를 팔로잉 설정/해제 하는 api입니다", responses = {
 		@ApiResponse(responseCode = "200", description = "성공"),
 		@ApiResponse(responseCode = "400", description = "파라미터 오류"),
 		@ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다"),
@@ -83,7 +83,7 @@ public class UserController {
 	}
 
 	@GetMapping("/api/user/nickname/check/{nickname}")
-	@Operation(summary = "닉네임 중복확인 api", description = "String 자료형: nickname 을 받아 해당하는 username이 존재하는지 검사합니다", responses = {
+	@Operation(summary = "닉네임 중복확인 api - 윤아", description = "String 자료형: nickname 을 받아 해당하는 username이 존재하는지 검사합니다", responses = {
 		@ApiResponse(responseCode = "200", description = "성공"),
 		@ApiResponse(responseCode = "400", description = "파라미터 오류"),
 		@ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다")
@@ -103,10 +103,11 @@ public class UserController {
 
 	//사용자 프로필 조회
 	@GetMapping("/api/user/{userId}/profile")
-	@Operation(summary = "사용자 프로필을 조회하는 api", description = "url로 user_id를 받아 해당 user의 프로필을 조회하는 api입니다", responses = {
+	@Operation(summary = "사용자 프로필을 조회하는 api - 윤재", description = "url로 user_id를 받아 해당 user의 프로필을 조회하는 api입니다", responses = {
 			@ApiResponse(responseCode = "200", description = "성공"),
 			@ApiResponse(responseCode = "400", description = "파라미터 오류"),
 			@ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다")
+
 	})
 	public ResponseEntity<UserProfileResponseDTO> getUserProfile(@PathVariable Long userId){
 		UserProfileResponseDTO userProfile = userService.getUserProfile(userId);
@@ -115,7 +116,7 @@ public class UserController {
 
 
 	@GetMapping("/api/user/following/{follower}")
-	@Operation(summary = "팔로잉 목록을 조회하는 api", description = "url로 user_id를 받아 해당 user의 팔로잉 목록을 조회하는 api입니다", responses = {
+	@Operation(summary = "팔로잉 목록을 조회하는 api - 윤아", description = "url로 user_id를 받아 해당 user의 팔로잉 목록을 조회하는 api입니다", responses = {
 		@ApiResponse(responseCode = "200", description = "성공"),
 		@ApiResponse(responseCode = "400", description = "파라미터 오류"),
 		@ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다")

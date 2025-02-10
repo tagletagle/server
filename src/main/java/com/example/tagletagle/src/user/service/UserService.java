@@ -1,9 +1,11 @@
 package com.example.tagletagle.src.user.service;
 
 
+import com.example.tagletagle.config.NotificationType;
+import com.example.tagletagle.src.notification.entity.NotificationEntity;
+import com.example.tagletagle.src.notification.repository.NotificationRepository;
 import com.example.tagletagle.src.user.dto.UserProfileResponseDTO;
 
-import com.example.tagletagle.src.tag.entity.TagEntity;
 import com.example.tagletagle.src.user.dto.FollowsDTO;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,7 @@ public class UserService {
 	@Autowired
 	private final UserRepository userRepository;
 	private final FollowsRepository followsRepository;
+	private final NotificationRepository notificationRepository;
 
 
 	public void saveOrUpdateUserBasicInfo(Long userId, UserBasicInfoDTO userBasicInfoDTO) {
@@ -55,7 +58,7 @@ public class UserService {
 		UserEntity user = userRepository.findUserEntityByIdAndStatus(userId, Status.ACTIVE)
 			.orElseThrow(()->new BaseException(BaseResponseStatus.USER_NO_EXIST));
 
-		UserEntity followingUser = userRepository.findUserEntityByIdAndStatus(userId, Status.ACTIVE)
+		UserEntity followingUser = userRepository.findUserEntityByIdAndStatus(followingUserId, Status.ACTIVE)
 			.orElseThrow(()->new BaseException(BaseResponseStatus.USER_NO_EXIST));
 
 		Boolean isFollow = followsRepository.existsByFollowerAndFollowing(user, followingUser);
@@ -68,6 +71,9 @@ public class UserService {
 
 			user.increaseFollowingCount();
 			followingUser.increaseFollowerCount();
+
+			NotificationEntity notification = new NotificationEntity(NotificationType.FOLLOW, followingUser ,user);
+			notificationRepository.save(notification);
 
 			comment = "팔로잉 되었습니다.";
 		}

@@ -1,7 +1,11 @@
 package com.example.tagletagle.src.board.controller;
 
+
 import com.example.tagletagle.src.board.dto.*;
 import com.example.tagletagle.src.board.dto.SearchResponseDTO;
+
+import com.example.tagletagle.src.board.dto.BoardResponseDTO;
+
 import org.springframework.web.bind.annotation.*;
 
 import com.example.tagletagle.src.user.dto.FollowsDTO;
@@ -39,12 +43,12 @@ public class BoardController {
 
 	private final BoardService boardService;
 
-	@Operation(summary = "게시글 작성 api", description = "프론트에서 createPostDTO에 해당하는 값을 넘겨받아 게시글을 작성합니다", responses = {
+	@PostMapping("/api/board/post")
+	@Operation(summary = "게시글 작성 api - 준현", description = "프론트에서 createPostDTO에 해당하는 값을 넘겨받아 게시글을 작성합니다", responses = {
 		@ApiResponse(responseCode = "200", description = "성공"),
 		@ApiResponse(responseCode = "400", description = "파라미터 오류"),
 		@ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다")
 	})
-	@PostMapping("/api/board/post")
 	public ResponseEntity<BaseResponse<String>> createPost(@Valid @RequestBody CreatePostDTO createPostDTO){
 		try{
 			Long userId = SecurityUtil.getCurrentUserId()
@@ -61,12 +65,13 @@ public class BoardController {
 
 	}
 
-	@Operation(summary = "게시글 리스트 조회(특정 userId에 대한) api", description = "url에 author_id를 적어 해당 id의 user가 작성한 게시글 리스트를 조회합니다", responses = {
+
+	@GetMapping("/api/board/post/user/{author_id}")
+	@Operation(summary = "게시글 리스트 조회(특정 userId에 대한) api - 준현", description = "url에 author_id를 적어 해당 id의 user가 작성한 게시글 리스트를 조회합니다", responses = {
 		@ApiResponse(responseCode = "200", description = "성공"),
 		@ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다"),
 		@ApiResponse(responseCode = "500", description = "저자가 존재하지 않습니다"),
 	})
-	@GetMapping("/api/board/post/user/{author_id}")
 	public ResponseEntity<BaseResponse<PostsDTO>> getPostsByUser(@PathVariable("author_id")Long authorId){
 		try{
 			Long userId = SecurityUtil.getCurrentUserId()
@@ -84,7 +89,7 @@ public class BoardController {
 	}
 
 	@GetMapping("/api/board/post/user/{author_id}/tag/{tag_id}")
-	@Operation(summary = "게시글 리스트 조회(특정 userId, 특정 태그) api", description = "url에 author_id와 tag_name을 적어 해당 author_id의 user가 작성한 게시글 중 특정 태그가 포함된 게시글 리스트를 조회합니다", responses = {
+	@Operation(summary = "게시글 리스트 조회(특정 userId, 특정 태그) api - 준현", description = "url에 author_id와 tag_name을 적어 해당 author_id의 user가 작성한 게시글 중 특정 태그가 포함된 게시글 리스트를 조회합니다", responses = {
 		@ApiResponse(responseCode = "200", description = "성공"),
 		@ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다"),
 		@ApiResponse(responseCode = "500", description = "저자가 존재하지 않습니다"),
@@ -107,7 +112,7 @@ public class BoardController {
 
 
 	@PatchMapping("api/board/post/like/{post_id}")
-	@Operation(summary = "좋아요 설정/좋아요 해제 api", description = "post_id의 해당하는 게시글에 로그인 유저가 기존에 좋아요가 안 되어있으면 설정, 되어있다면 좋아요를 해제합니다", responses = {
+	@Operation(summary = "좋아요 설정/좋아요 해제 api - 준현", description = "post_id의 해당하는 게시글에 로그인 유저가 기존에 좋아요가 안 되어있으면 설정, 되어있다면 좋아요를 해제합니다", responses = {
 		@ApiResponse(responseCode = "200", description = "성공"),
 		@ApiResponse(responseCode = "400", description = "파라미터 오류"),
 		@ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다"),
@@ -132,7 +137,7 @@ public class BoardController {
 	}
 
 	@PatchMapping("api/board/post/scrap/{post_id}")
-	@Operation(summary = "스크랩 설정/좋아요 해제 api", description = "post_id의 해당하는 게시글에 로그인 유저가 기존에 스크랩이 안 되어있으면 설정, 되어있다면 좋아요를 해제합니다", responses = {
+	@Operation(summary = "스크랩 설정/좋아요 해제 api - 준현", description = "post_id의 해당하는 게시글에 로그인 유저가 기존에 스크랩이 안 되어있으면 설정, 되어있다면 좋아요를 해제합니다", responses = {
 		@ApiResponse(responseCode = "200", description = "성공"),
 		@ApiResponse(responseCode = "400", description = "파라미터 오류"),
 		@ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다"),
@@ -157,7 +162,7 @@ public class BoardController {
 	}
 
 	@GetMapping("api/board/comment/{post_id}")
-	@Operation(summary = "게시글 댓글 리스트 조회 api", description = "post_id의 해당하는 게시글에 댓글 리스트를 조회", responses = {
+	@Operation(summary = "게시글 댓글 리스트 조회 api - 준현", description = "post_id의 해당하는 게시글에 댓글 리스트를 조회", responses = {
 		@ApiResponse(responseCode = "200", description = "성공"),
 		@ApiResponse(responseCode = "400", description = "파라미터 오류"),
 		@ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다"),
@@ -182,6 +187,10 @@ public class BoardController {
 
 
 	@GetMapping("/api/board/hot")
+	@Operation(summary = "핫 게시글 조회 api - 윤재", description = "좋아요가 많은 게시글 리스트 조회", responses = {
+		@ApiResponse(responseCode = "200", description = "성공"),
+
+	})
 	public ResponseEntity<List<BoardResponseDTO>> getHotBoard(
 			@RequestParam(required = false, defaultValue = "5") Long likeCount
 	){
@@ -189,7 +198,11 @@ public class BoardController {
 		return ResponseEntity.ok(hotPosts);
 	}
   
-	@GetMapping("/api/board/search/history")
+	@GetMapping("/api/board/search/history")@Operation(summary = "검색 기록 조회 api - 윤아", description = "access Token의 user의 검색 기록을 가져옵니다", responses = {
+		@ApiResponse(responseCode = "200", description = "성공"),
+		@ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다"),
+
+	})
 	public List<SearchHistoryDTO> getFSearchHistoryList(){
 		Long userId = SecurityUtil.getCurrentUserId()
 				.orElseThrow(() -> new BaseException(BaseResponseStatus.REQUIRED_LOGIN));

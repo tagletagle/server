@@ -73,6 +73,7 @@ public class UserEntity extends BaseEntity {
 		this.followingCount = 0L;
 	}
 
+
 	public UserEntity(String username){
 		this.username = username;
 		this.password = "tagle1234";
