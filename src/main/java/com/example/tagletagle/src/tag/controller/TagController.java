@@ -1,10 +1,11 @@
 package com.example.tagletagle.src.tag.controller;
 
 import com.example.tagletagle.src.tag.dto.TagDTO;
+import com.example.tagletagle.src.tag.dto.TagInterestsDTO;
+import com.example.tagletagle.src.tag.dto.TagResponseDTO;
 import com.example.tagletagle.src.tag.service.TagService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,6 +28,22 @@ public class TagController {
     public ResponseEntity<List<TagDTO>> getRecentTags(){
         List<TagDTO> recentTags = tagService.getRecentTags();
         return ResponseEntity.ok(recentTags);
+    }
+
+    //태그 취향정보 입력
+    //[o] 예외처리
+    @PostMapping("/api/user/tag/register")
+    public ResponseEntity<String> registrateInterestTagList(@RequestBody TagResponseDTO request) {
+        Long userId = request.getUserId();
+        List<Long> interestTagId = request.getInterestTagId();
+
+        if (userId == null || interestTagId == null || interestTagId.isEmpty()) {
+            return ResponseEntity.badRequest().body("유효하지 않은 요청입니다.");
+        }
+
+        tagService.saveTagsById(userId, interestTagId);
+
+        return ResponseEntity.ok("태그가 성공적으로 등록되었습니다.");
     }
 
 }

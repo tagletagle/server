@@ -8,6 +8,9 @@ import com.example.tagletagle.src.tag.repository.TagRepository;
 import com.example.tagletagle.src.tag.dto.TagDTO;
 import com.example.tagletagle.src.user.dto.FollowsDTO;
 import com.example.tagletagle.src.user.entity.FollowsEntity;
+import com.example.tagletagle.src.user.entity.UserEntity;
+import com.example.tagletagle.src.user.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,7 @@ import java.util.stream.Collectors;
 public class TagService {
         private final TagRepository tagRepository;
         private final TagInterestsRepository tagInterestsRepository;
+        private final UserRepository userRepository;
         /*stream 사용해서 컬렉션 데이터를 변환
          * map은 요소를 다른 값으로 변환
          * collect 사용하면 스트림 요소 수집해서 컬렉션 생성*/
@@ -66,4 +70,23 @@ public class TagService {
                 .collect(Collectors.toList());
     }
 
+    //[o]findAllById 구현
+    //[o]insertUserInterestTag 구현
+    public void saveTagsById(Long userId, List<Long> interestTagId) {
+        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<UserTagInterests> userTagInterests = interestTagId.stream()
+                .map(tagId -> {
+                    TagEntity tag = tagRepository.findById(tagId).orElseThrow(() -> new RuntimeException("Tag not found"));
+
+                    // user와 tag를 설정하기 위해 UserTagInterests 객체를 생성
+                    UserTagInterests userTagInterest = new UserTagInterests();
+                    userTagInterest.setUser(user); // setter로 user 설정
+                    userTagInterest.setTag(tag);   // setter로 tag 설정
+                    return userTagInterest; // 생성된 객체 반환
+                })
+                .collect(Collectors.toList());
+
+        tagInterestsRepository.saveAll(userTagInterests);
+    }
 }

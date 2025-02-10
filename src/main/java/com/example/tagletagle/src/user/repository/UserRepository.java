@@ -3,6 +3,7 @@ package com.example.tagletagle.src.user.repository;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.tagletagle.src.tag.entity.UserTagInterests;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.example.tagletagle.config.Status;
@@ -20,4 +21,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
 	List<UserEntity> findByNicknameContainingOrUsernameContainingOrDescriptionContaining(String nickname, String username, String description);
 
+	@Query("SELECT ut FROM UserTagInterests ut JOIN ut.user u WHERE u.id = :userId")
+	List<UserTagInterests> findUserTagInterestsById(@Param("userId") Long userId);
 }
