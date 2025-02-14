@@ -303,4 +303,16 @@ public class BoardService {
 		return new SearchResponseDTO(tags, users);
 	}
 
+	public LikedUsersDTO getLikedUserListByPost(Long userId, Long postId) {
+		UserEntity user = userRepository.findUserEntityByIdAndStatus(userId, Status.ACTIVE)
+				.orElseThrow(()->new BaseException(BaseResponseStatus.USER_NO_EXIST));
+
+		PostEntity post = postRepository.findPostEntityById(postId)
+				.orElseThrow(()->new BaseException(BaseResponseStatus.POST_NO_EXIST));
+
+		List<LikedUsersInfoDTO> likedUsersInfoDTOList = boardRepository.findLikedUsersByPost(postId);
+
+		return new LikedUsersDTO(likedUsersInfoDTOList);
+	}
+
 }

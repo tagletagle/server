@@ -216,4 +216,21 @@ public class BoardController {
 
 		return ResponseEntity.ok(boardService.getSearchResultList(keyword));
     }
+
+	@GetMapping("/api/board/post/like/list/{post_id}")
+	public ResponseEntity<BaseResponse<LikedUsersDTO>> getLikedUsers(@PathVariable("post_id") Long postId) {
+
+		try{
+			Long userId = SecurityUtil.getCurrentUserId()
+					.orElseThrow(() -> new BaseException(BaseResponseStatus.REQUIRED_LOGIN));
+
+			LikedUsersDTO likedUsersDTO = boardService.getLikedUserListByPost(userId, postId);
+
+			return ResponseEntity.ok(new BaseResponse<>(likedUsersDTO));
+
+		}catch (BaseException e){
+			HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+			return ResponseEntity.status(httpStatus).body(new BaseResponse<>(e.getStatus()));
+		}
+	}
 }

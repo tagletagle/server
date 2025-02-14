@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import com.example.tagletagle.src.board.dto.LikedUsersDTO;
+import com.example.tagletagle.src.board.dto.LikedUsersInfoDTO;
 import com.example.tagletagle.src.board.entity.PostEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -174,6 +176,21 @@ public class BoardRepository {
 					}
 				},
 				likeCount
+		);
+	}
+
+	public List<LikedUsersInfoDTO> findLikedUsersByPost(Long postId) {
+		String sql = "SELECT u.id AS userId, u.nickname AS nickName, u.profile_img_url AS userProfileImgUrl " +
+				"FROM post_like l " +
+				"JOIN user u ON l.user_id = u.id " +
+				"WHERE l.post_id = ?";
+
+		return jdbcTemplate.query(sql, new Object[]{postId}, (rs, rowNum) ->
+				new LikedUsersInfoDTO(
+						rs.getLong("userId"),
+						rs.getString("nickName"),
+						rs.getString("userProfileImgUrl")
+				)
 		);
 	}
 }
