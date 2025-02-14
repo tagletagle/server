@@ -1,5 +1,6 @@
 package com.example.tagletagle.src.tag.repository;
 
+import com.example.tagletagle.src.tag.entity.TagEntity;
 import com.example.tagletagle.src.tag.entity.UserTagInterests;
 import com.example.tagletagle.src.user.entity.FollowsEntity;
 import com.example.tagletagle.src.user.entity.UserEntity;
@@ -22,4 +23,11 @@ public interface TagInterestsRepository extends JpaRepository<UserTagInterests, 
     @Transactional
     @Query(value = "INSERT INTO user_tag_interests (user_id, tag_id) VALUES (:userId, :tagId)", nativeQuery = true)
     void insertUserInterestTag(Long userId, Long tagId);
+
+    Boolean existsByUserAndTag(UserEntity user, TagEntity tag);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM UserTagInterests ut WHERE ut.user = :user AND ut.tag =:tag")
+    int deleteUserTagInterestsByUserAndTag(@Param("user") UserEntity user, @Param("tag") TagEntity tag);
 }

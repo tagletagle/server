@@ -38,6 +38,7 @@ public enum BaseResponseStatus {
 	/**
 	 * 3000 : 조윤재 에러
 	 */
+	TAG_NO_EXIST(false, 3000, "태그가 존재하지 않습니다."),
 
 	/**
 	 * 4000 : 박윤아 에러

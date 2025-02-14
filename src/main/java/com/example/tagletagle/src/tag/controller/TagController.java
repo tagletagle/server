@@ -9,6 +9,7 @@ import com.example.tagletagle.src.tag.dto.TagResponseDTO;
 import com.example.tagletagle.src.tag.service.TagService;
 import com.example.tagletagle.utils.SecurityUtil;
 
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -74,7 +77,6 @@ public class TagController {
 
 
     //태그 취향정보 입력
-    //[o] 예외처리
     @PostMapping("/api/user/tag/register")
     public ResponseEntity<String> registrateInterestTagList(@RequestBody TagResponseDTO request) {
         Long userId = request.getUserId();
@@ -87,6 +89,25 @@ public class TagController {
         tagService.saveTagsById(userId, interestTagId);
 
         return ResponseEntity.ok("태그가 성공적으로 등록되었습니다.");
+    }
+
+    //사용자 관심태그 수정
+    @PatchMapping("api/user/tag/modify")
+    public ResponseEntity<BaseResponse<String>> registerOrDelete(@RequestBody TagResponseDTO requestTags) {
+
+        Long userId = SecurityUtil.getCurrentUserId()
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.REQUIRED_LOGIN));
+
+        // 단일 값이 들어올 경우 List로 변환
+        // interestTagIds가 null이면 빈 리스트로 초기화
+        List<Long> interestTagIds = requestTags.getInterestTagId();
+        if (interestTagIds == null) {
+            interestTagIds = new ArrayList<>();
+        }
+
+        String comment = tagService.registerOrDelete(userId, interestTagIds);
+
+        return ResponseEntity.ok(new BaseResponse<>(comment));
     }
 
 }
