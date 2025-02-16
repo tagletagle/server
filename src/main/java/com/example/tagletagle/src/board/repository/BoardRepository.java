@@ -6,6 +6,9 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import com.example.tagletagle.src.board.dto.LikedUsersDTO;
+import com.example.tagletagle.src.board.dto.LikedUsersInfoDTO;
+import com.example.tagletagle.src.board.entity.PostEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -156,6 +159,42 @@ public class BoardRepository {
 
 	}
 
+	public List<PostEntity> selectByLike(Long likeCount) {
+		return jdbcTemplate.query(
+				"SELECT id, url, like_count, title, comment_count, updated_at FROM post WHERE like_count >= ? ORDER BY like_count DESC LIMIT 5",
+				new RowMapper<PostEntity>() {
+					@Override
+					public PostEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
+						PostEntity post = new PostEntity();
+						post.setId(rs.getLong("id"));
+						post.setUrl(rs.getString("url"));
+						post.setLikeCount(rs.getLong("like_count"));
+						post.setTitle(rs.getString("title"));
+						post.setCommentCount(rs.getLong("comment_count"));
+						rs.getTimestamp("updated_at").toLocalDateTime();
+						return post;
+					}
+				},
+				likeCount
+		);
+	}
+	public List<LikedUsersInfoDTO> findLikedUsersByPost(Long postId) {
+		String sql = "SELECT u.id AS userId, u.nickname AS nickName, u.profile_img_url AS userProfileImgUrl " +
+				"FROM post_like l " +
+				"JOIN user u ON l.user_id = u.id " +
+				"WHERE l.post_id = ?";
+
+
+
+
+		return jdbcTemplate.query(sql, new Object[]{postId}, (rs, rowNum) ->
+			new LikedUsersInfoDTO(
+			rs.getLong("userId"),
+						rs.getString("nickName"),
+								rs.getString("userProfileImgUrl")
+								)
+		);
+	}
 	public List<PostInfoDTO> findNewPosts(Long userId) {
 
 		String sql ="SELECT p.id AS postId, p.title AS title, p.url AS url, " +
@@ -195,13 +234,10 @@ public class BoardRepository {
 						return new PostInfoDTO(postId, title, url, commentCount, likeCount, scrapCount, authorId, authorNickname, authorProfileImgUrl, isLike, isScrap,tagIds, tagNames);
 					}
 				}, userId,userId
-
-
 		);
 		return postInfoDTOList;
-
-
 	}
+
 
 
 	}

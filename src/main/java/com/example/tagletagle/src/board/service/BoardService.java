@@ -1,19 +1,33 @@
 package com.example.tagletagle.src.board.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import com.example.tagletagle.meta.JsoupMetadataService;
+import com.example.tagletagle.meta.SeleniumMetadataService;
 import com.example.tagletagle.src.board.dto.*;
 import com.example.tagletagle.src.board.entity.*;
 import com.example.tagletagle.src.board.repository.*;
-import com.example.tagletagle.src.user.dto.FollowsDTO;
-import com.example.tagletagle.src.user.entity.FollowsEntity;
+import com.example.tagletagle.src.tag.dto.TagDTO;
+import com.example.tagletagle.src.board.dto.SearchResponseDTO;
+
+
+import com.example.tagletagle.src.board.entity.SearchHistoryEntity;
+
+import com.example.tagletagle.src.user.dto.UserProfileResponseDTO;
 import org.springframework.stereotype.Service;
 
 import com.example.tagletagle.base.BaseException;
 import com.example.tagletagle.base.BaseResponseStatus;
 import com.example.tagletagle.config.Status;
+import com.example.tagletagle.src.board.entity.PostEntity;
+import com.example.tagletagle.src.board.entity.PostLikeEntity;
+import com.example.tagletagle.src.board.entity.PostScrapEntity;
+import com.example.tagletagle.src.notification.repository.NotificationTempRepository;
 import com.example.tagletagle.src.tag.entity.PostTagEntity;
 import com.example.tagletagle.src.tag.entity.TagEntity;
 import com.example.tagletagle.src.tag.repository.PostTagRepository;
@@ -35,9 +49,13 @@ public class BoardService {
 	private final PostTagRepository postTagRepository;
 	private final PostLikeRepository postLikeRepository;
 	private final PostScrapRepository postScrapRepository;
-	private final SearchHistoryRepository searchHistoryRepository;
+	private final JsoupMetadataService jsoupMetadataService;
+	private final SeleniumMetadataService seleniumMetadataService;
+	private final NotificationTempRepository notificationTempRepository;
 	private final CommentRepository commentRepository;
 
+
+	private final SearchHistoryRepository searchHistoryRepository;
 
 	@Transactional
 	public void createPost(Long userId, CreatePostDTO createPostDTO) {
@@ -45,7 +63,43 @@ public class BoardService {
 		UserEntity user = userRepository.findUserEntityByIdAndStatus(userId, Status.ACTIVE)
 			.orElseThrow(()->new BaseException(BaseResponseStatus.USER_NO_EXIST));
 
-		PostEntity post = new PostEntity(createPostDTO, user);
+		PostEntity post = null;
+
+		if(createPostDTO.getUrl().contains("instagram.com") || createPostDTO.getUrl().contains("twitter.com")
+			|| createPostDTO.getUrl().contains("x.com") || createPostDTO.getUrl().contains("tiktok.com")){
+			CompletableFuture<Map<String, String>> future = seleniumMetadataService.fetchMetadataAsync(createPostDTO.getUrl());
+			Map<String, String> metadata = future.join();
+
+			if(createPostDTO.getTitle() == null){
+				post = new PostEntity(createPostDTO, user, metadata.get("title"), metadata.get("image"), metadata.get("author") );
+			}else{
+				post = new PostEntity(createPostDTO, user, metadata.get("image"), metadata.get("author") );
+			}
+
+			System.out.println("1111111" + metadata.get("title"));
+			System.out.println("222222" + metadata.get("image"));
+			System.out.println("333333" + metadata.get("author"));
+
+		}
+		else{
+			Map<String, String> metadata = jsoupMetadataService.fetchMetadata(createPostDTO.getUrl());
+
+
+			if(createPostDTO.getTitle() == null || createPostDTO.getTitle().isBlank()){
+				System.out.println("진입!!!!");
+				post = new PostEntity(createPostDTO, user, metadata.get("title"), metadata.get("image"), metadata.get("author") );
+			}else{
+				post = new PostEntity(createPostDTO, user, metadata.get("image"), metadata.get("author") );
+			}
+
+			System.out.println("1111111" + metadata.get("title"));
+			System.out.println("222222" + metadata.get("image"));
+			System.out.println("333333" + metadata.get("author"));
+
+
+		}
+
+
 		postRepository.save(post);
 
 		List<Long> tagList = createPostDTO.getTagIdList();
@@ -66,6 +120,9 @@ public class BoardService {
 		}
 
 		postTagRepository.saveAll(postTagEntityList);
+
+		List<Long> followerIdList = notificationTempRepository.findFollowerIds(userId);
+		notificationTempRepository.insertNotificationsBySave(userId, post.getId(), followerIdList);
 
 	}
 
@@ -189,6 +246,27 @@ public class BoardService {
 
 	}
 
+
+	public List<BoardResponseDTO> getHotBoard(Long likeCount) {
+
+		// 유효성 검사
+		if (likeCount == null || likeCount < 0) {
+			throw new IllegalArgumentException("likeCount must be a non-negative number and cannot be null.");
+		}
+
+		List<PostEntity> hotPosts = boardRepository.selectByLike(likeCount);
+
+		return hotPosts.stream()
+				.map(post -> new BoardResponseDTO(
+						post.getId(),
+						post.getTitle(),
+						post.getUrl(),
+						post.getLikeCount(),
+						post.getCommentCount()
+				))
+				.collect(Collectors.toList());    }
+
+
 	public  PostsDTO getNewPosts(Long userId){
 
 		UserEntity user = userRepository.findUserEntityByIdAndStatus(userId, Status.ACTIVE)
@@ -223,6 +301,38 @@ public class BoardService {
 		searchHistoryDTO.setUserId(searchHistoryEntity.getUser().getId());
 
 		return searchHistoryDTO;
+	}
+
+	public SearchResponseDTO getSearchResultList(String keyword) {
+
+		if (keyword == null || keyword.trim().isEmpty()) {
+			return new SearchResponseDTO(Collections.emptyList(), Collections.emptyList()); // 빈 리스트 반환
+		}
+
+		List<TagDTO> tags = tagRepository.findByNameContaining(keyword)
+				.stream()
+				.map(tag -> new TagDTO(tag.getId(), tag.getName()))
+				.collect(Collectors.toList());
+
+		List<UserProfileResponseDTO> users = userRepository.findByNicknameContainingOrUsernameContainingOrDescriptionContaining(keyword, keyword, keyword)
+				.stream()
+				.map(user -> new UserProfileResponseDTO(user.getId(), user.getNickname(), user.getUsername(),
+						user.getDescription(), user.getFollowerCount(), user.getFollowingCount(), user.getProfileImgUrl()))
+				.collect(Collectors.toList());
+
+		return new SearchResponseDTO(tags, users);
+	}
+
+	public LikedUsersDTO getLikedUserListByPost(Long userId, Long postId) {
+		UserEntity user = userRepository.findUserEntityByIdAndStatus(userId, Status.ACTIVE)
+				.orElseThrow(()->new BaseException(BaseResponseStatus.USER_NO_EXIST));
+
+		PostEntity post = postRepository.findPostEntityById(postId)
+				.orElseThrow(()->new BaseException(BaseResponseStatus.POST_NO_EXIST));
+
+		List<LikedUsersInfoDTO> likedUsersInfoDTOList = boardRepository.findLikedUsersByPost(postId);
+
+		return new LikedUsersDTO(likedUsersInfoDTOList);
 	}
 
 	public void createComment(Long userId, Long postId, CreateCommentDTO createCommentDTO) {

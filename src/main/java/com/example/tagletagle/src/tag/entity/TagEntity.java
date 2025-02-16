@@ -30,4 +30,5 @@ public class TagEntity extends BaseEntity {
 	@Column(nullable = false)
 	private String name;
 
+
 }

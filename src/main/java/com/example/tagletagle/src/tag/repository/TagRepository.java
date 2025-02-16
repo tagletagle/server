@@ -11,5 +11,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface TagRepository extends JpaRepository<TagEntity, Long> {
 
+    List<TagEntity> findTop10ByOrderByUpdateAtDesc();
+    List<TagEntity> findByNameContaining(String keyword);
 }
 

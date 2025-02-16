@@ -1,6 +1,10 @@
 package com.example.tagletagle.src.user.controller;
 
 import org.springframework.web.bind.annotation.*;
+
+import com.example.tagletagle.src.user.dto.UserProfileResponseDTO;
+import com.example.tagletagle.src.user.entity.UserEntity;
+
 import com.example.tagletagle.src.board.dto.PostsDTO;
 import com.example.tagletagle.src.user.dto.FollowsDTO;
 
@@ -30,9 +34,8 @@ public class UserController {
 
 	private final UserService userService;
 
-
 	@PatchMapping("/api/user/basic/info")
-	@Operation(summary = "유저에 대한 기본정보를 작성/수정 api", description = "UserBasicInfoDTO를 받아 user의 기본 정보를 작성 및 수정 하는 api입니다", responses = {
+	@Operation(summary = "유저에 대한 기본정보를 작성/수정 api - 준현", description = "UserBasicInfoDTO를 받아 user의 기본 정보를 작성 및 수정 하는 api입니다", responses = {
 		@ApiResponse(responseCode = "200", description = "성공"),
 		@ApiResponse(responseCode = "400", description = "파라미터 오류"),
 		@ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다"),
@@ -55,7 +58,7 @@ public class UserController {
 	}
 
 	@PatchMapping("/api/user/following/{following_user_id}")
-	@Operation(summary = "팔로잉 설정/해제 api", description = "url로 following_user_id를 받아 로그인한 유저가 해당 following 유저를 팔로잉 설정/해제 하는 api입니다", responses = {
+	@Operation(summary = "팔로잉 설정/해제 api - 준현", description = "url로 following_user_id를 받아 로그인한 유저가 해당 following 유저를 팔로잉 설정/해제 하는 api입니다", responses = {
 		@ApiResponse(responseCode = "200", description = "성공"),
 		@ApiResponse(responseCode = "400", description = "파라미터 오류"),
 		@ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다"),
@@ -68,6 +71,9 @@ public class UserController {
 
 			String comment = userService.followUser(userId, followingUserId);
 
+			System.out.println("userId : " + userId); //팔로잉 하는 사람(팔로워)
+			System.out.println("followingUserId : " + followingUserId); //팔로잉 당하는 사람
+
 			return ResponseEntity.ok(new BaseResponse<>(comment));
 
 		}catch (BaseException e){
@@ -78,7 +84,7 @@ public class UserController {
 	}
 
 	@GetMapping("/api/user/nickname/check/{nickname}")
-	@Operation(summary = "닉네임 중복확인 api", description = "String 자료형: nickname 을 받아 해당하는 username이 존재하는지 검사합니다", responses = {
+	@Operation(summary = "닉네임 중복확인 api - 윤아", description = "String 자료형: nickname 을 받아 해당하는 username이 존재하는지 검사합니다", responses = {
 		@ApiResponse(responseCode = "200", description = "성공"),
 		@ApiResponse(responseCode = "400", description = "파라미터 오류"),
 		@ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다")
@@ -95,8 +101,23 @@ public class UserController {
 
 	}
 
+
+	//사용자 프로필 조회
+	@GetMapping("/api/user/{userId}/profile")
+	@Operation(summary = "사용자 프로필을 조회하는 api - 윤재", description = "url로 user_id를 받아 해당 user의 프로필을 조회하는 api입니다", responses = {
+			@ApiResponse(responseCode = "200", description = "성공"),
+			@ApiResponse(responseCode = "400", description = "파라미터 오류"),
+			@ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다")
+
+	})
+	public ResponseEntity<UserProfileResponseDTO> getUserProfile(@PathVariable Long userId){
+		UserProfileResponseDTO userProfile = userService.getUserProfile(userId);
+		return ResponseEntity.ok(userProfile);
+	}
+
+
 	@GetMapping("/api/user/following/{follower}")
-	@Operation(summary = "팔로워 목록을 조회하는 api", description = "url로 user_id를 받아 해당 user의 팔로워 목록을 조회하는 api입니다", responses = {
+	@Operation(summary = "팔로잉 목록을 조회하는 api - 윤아", description = "url로 user_id를 받아 해당 user의 팔로잉 목록을 조회하는 api입니다", responses = {
 		@ApiResponse(responseCode = "200", description = "성공"),
 		@ApiResponse(responseCode = "400", description = "파라미터 오류"),
 		@ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다")
@@ -110,5 +131,19 @@ public class UserController {
 		}
 	}
 
+	@GetMapping("/api/user/follower/{following_user_id}")
+	@Operation(summary = "팔로워 목록을 조회하는 api", description = "url로 user_id를 받아 해당 user의 팔로워 목록을 조회하는 api입니다", responses = {
+			@ApiResponse(responseCode = "200", description = "성공"),
+			@ApiResponse(responseCode = "400", description = "파라미터 오류"),
+			@ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다")
+	})
+	public ResponseEntity<BaseResponse<List<FollowsDTO>>> getFollowerList(@PathVariable Long following_user_id) {
+		try{
+			return ResponseEntity.ok(new BaseResponse<>(userService.getFollowerUsers(following_user_id)));
+		}catch (BaseException e) {
+			HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+			return ResponseEntity.status(httpStatus).body(new BaseResponse<>(e.getStatus()));
+		}
+	}
 
 }

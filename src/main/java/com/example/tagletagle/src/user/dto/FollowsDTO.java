@@ -11,9 +11,11 @@ import lombok.Setter;
 
 public class FollowsDTO {
     private Long id;
-    private Long followerId;
-    private Long followingId;
+    private Long followerId; //팔로워(=팔로잉 하는 사람)
+    private Long followingId; //팔로잉 하는 사람
     private String followingNickname;
     private String followingProfile;
 
+    private String followerNickname;
+    private String followerProfile;
 }
