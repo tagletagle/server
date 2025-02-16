@@ -77,6 +77,7 @@ public class UserService {
 
 	}
 
+
 	public boolean nicknameDupCheck(String nickname){
 		return userRepository.existsUserEntityByNickname(nickname);
 

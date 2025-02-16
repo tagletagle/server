@@ -1,5 +1,6 @@
 package com.example.tagletagle.src.user.controller;
 
+import org.springframework.web.bind.annotation.*;
 import com.example.tagletagle.src.board.dto.PostsDTO;
 import com.example.tagletagle.src.user.dto.FollowsDTO;
 
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 public class UserController {
 
 	private final UserService userService;
+
 
 	@PatchMapping("/api/user/basic/info")
 	@Operation(summary = "유저에 대한 기본정보를 작성/수정 api", description = "UserBasicInfoDTO를 받아 user의 기본 정보를 작성 및 수정 하는 api입니다", responses = {
