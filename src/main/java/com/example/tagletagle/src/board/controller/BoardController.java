@@ -203,11 +203,12 @@ public class BoardController {
 
 	}
 
-	@Operation(summary = "게시글 작성 api", description = "CreateComment에 대한 DTO 넘겨받아 게시글 작성", responses = {
+	@Operation(summary = "댓글 작성 api", description = "CreateComment에 대한 DTO 넘겨받아 댓글 작성", responses = {
 			@ApiResponse(responseCode = "200", description = "성공"),
 			@ApiResponse(responseCode = "400", description = "파라미터 오류"),
 			@ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다")
 	})
+
 	@PostMapping("/api/board/comment/{post_id}")
 	public ResponseEntity<BaseResponse<String>> createComment(@Valid @RequestBody CreateCommentDTO createCommentDTO, @PathVariable("post_id")Long postId){
 		try{
