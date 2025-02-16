@@ -33,6 +33,9 @@ public class UserEntity extends BaseEntity {
 	@Column(nullable = false)
 	private String username;
 
+	@Column(nullable = false)
+	private String password;
+
 	//기본 정보 입력 시 적는 닉네임
 	@Column(nullable = true)
 	private String nickname;
@@ -66,6 +69,14 @@ public class UserEntity extends BaseEntity {
 	public UserEntity(String username, String role){
 		this.username = username;
 		this.role = role;
+		this.followerCount = 0L;
+		this.followingCount = 0L;
+	}
+
+	public UserEntity(String username){
+		this.username = username;
+		this.password = "tagle1234";
+		this.role = "ROLE_USER";
 		this.followerCount = 0L;
 		this.followingCount = 0L;
 	}

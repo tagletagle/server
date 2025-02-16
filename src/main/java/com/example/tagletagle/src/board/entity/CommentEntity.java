@@ -1,5 +1,7 @@
 package com.example.tagletagle.src.board.entity;
 
+import com.example.tagletagle.src.board.dto.CreateCommentDTO;
+import com.example.tagletagle.src.board.dto.CreatePostDTO;
 import org.hibernate.annotations.DynamicInsert;
 
 import com.example.tagletagle.base.BaseEntity;
@@ -41,5 +43,11 @@ public class CommentEntity extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "post_id")
 	private PostEntity post;
+
+	public CommentEntity(CreateCommentDTO createCommentDTO, UserEntity user, PostEntity post){
+		this.contents = createCommentDTO.getContent();
+		this.user = user;
+		this.post = post;
+	}
 
 }

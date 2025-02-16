@@ -2,24 +2,18 @@ package com.example.tagletagle.src.board.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.example.tagletagle.src.board.dto.*;
+import com.example.tagletagle.src.board.entity.*;
+import com.example.tagletagle.src.board.repository.*;
+import com.example.tagletagle.src.user.dto.FollowsDTO;
+import com.example.tagletagle.src.user.entity.FollowsEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.tagletagle.base.BaseException;
 import com.example.tagletagle.base.BaseResponseStatus;
 import com.example.tagletagle.config.Status;
-import com.example.tagletagle.src.board.dto.CommentInfoDTO;
-import com.example.tagletagle.src.board.dto.CommentsDTO;
-import com.example.tagletagle.src.board.dto.CreatePostDTO;
-import com.example.tagletagle.src.board.dto.PostInfoDTO;
-import com.example.tagletagle.src.board.dto.PostsDTO;
-import com.example.tagletagle.src.board.entity.PostEntity;
-import com.example.tagletagle.src.board.entity.PostLikeEntity;
-import com.example.tagletagle.src.board.entity.PostScrapEntity;
-import com.example.tagletagle.src.board.repository.BoardRepository;
-import com.example.tagletagle.src.board.repository.PostLikeRepository;
-import com.example.tagletagle.src.board.repository.PostRepository;
-import com.example.tagletagle.src.board.repository.PostScrapRepository;
 import com.example.tagletagle.src.tag.entity.PostTagEntity;
 import com.example.tagletagle.src.tag.entity.TagEntity;
 import com.example.tagletagle.src.tag.repository.PostTagRepository;
@@ -41,6 +35,9 @@ public class BoardService {
 	private final PostTagRepository postTagRepository;
 	private final PostLikeRepository postLikeRepository;
 	private final PostScrapRepository postScrapRepository;
+	private final SearchHistoryRepository searchHistoryRepository;
+	private final CommentRepository commentRepository;
+
 
 	@Transactional
 	public void createPost(Long userId, CreatePostDTO createPostDTO) {
@@ -53,9 +50,12 @@ public class BoardService {
 
 		List<Long> tagList = createPostDTO.getTagIdList();
 
+		if(createPostDTO.getUrl() == null){
+			throw new BaseException(BaseResponseStatus.MUST_SELECT_TAG);
+		}
+
 		if(tagList.size() == 0){
-			//예외 처리
-			return;
+			throw new BaseException(BaseResponseStatus.MUST_SELECT_TAG);
 		}
 
 		List<TagEntity> tagEntityList = tagRepository.findAllById(tagList);
@@ -91,7 +91,7 @@ public class BoardService {
 
 	}
 
-	public PostsDTO getPostsByUserWithTag(Long userId, Long authorId, String tagName) {
+	public PostsDTO getPostsByUserWithTag(Long userId, Long authorId, Long tagId) {
 		UserEntity user = userRepository.findUserEntityByIdAndStatus(userId, Status.ACTIVE)
 			.orElseThrow(()->new BaseException(BaseResponseStatus.USER_NO_EXIST));
 
@@ -99,8 +99,9 @@ public class BoardService {
 			.orElseThrow(()->new BaseException(BaseResponseStatus.AUTHOR_NO_EXIST));
 
 		PostsDTO postsDTO = new PostsDTO();
-		List<PostInfoDTO> postInfoDTOList = boardRepository.findPostsByAuthorAndUserWithTag(authorId, userId, tagName);
+		List<PostInfoDTO> postInfoDTOList = boardRepository.findPostsByAuthorAndUserWithTag(authorId, userId, tagId);
 		if(postInfoDTOList.size() == 0){
+			System.out.println("해당 태그로 작성한 글이 없습니다");
 			return postsDTO;
 		}
 
@@ -187,4 +188,56 @@ public class BoardService {
 		return commentsDTO;
 
 	}
+
+	public  PostsDTO getNewPosts(Long userId){
+
+		UserEntity user = userRepository.findUserEntityByIdAndStatus(userId, Status.ACTIVE)
+				.orElseThrow(()->new BaseException(BaseResponseStatus.USER_NO_EXIST));
+
+		UserEntity author = userRepository.findUserEntityByIdAndStatus(userId, Status.ACTIVE)
+				.orElseThrow(()->new BaseException(BaseResponseStatus.AUTHOR_NO_EXIST));
+
+		PostsDTO postsDTO = new PostsDTO();
+		List<PostInfoDTO> postInfoDTOList = boardRepository.findNewPosts(userId);
+		if(postInfoDTOList.size() == 0){
+			return postsDTO;
+		}
+
+
+		postsDTO.setPostInfoDTOList(postInfoDTOList);
+
+		return postsDTO;
+	}
+
+	public List<SearchHistoryDTO> getUserSearchHistory(Long userId) {
+		return searchHistoryRepository.findSearchHistoryEntitiesByUser_Id(userId).stream()
+				.map(this:: convertToSearchHistoryDTO)
+				.collect(Collectors.toList());
+	}
+
+	private SearchHistoryDTO convertToSearchHistoryDTO(SearchHistoryEntity searchHistoryEntity) {
+		SearchHistoryDTO searchHistoryDTO = new SearchHistoryDTO();
+
+		searchHistoryDTO.setId((searchHistoryEntity.getId()));
+		searchHistoryDTO.setContent(searchHistoryEntity.getContents());
+		searchHistoryDTO.setUserId(searchHistoryEntity.getUser().getId());
+
+		return searchHistoryDTO;
+	}
+
+	public void createComment(Long userId, Long postId, CreateCommentDTO createCommentDTO) {
+
+		UserEntity user = userRepository.findUserEntityByIdAndStatus(userId, Status.ACTIVE)
+				.orElseThrow(()->new BaseException(BaseResponseStatus.USER_NO_EXIST));
+
+		PostEntity post = postRepository.findPostEntityById(postId)
+				.orElseThrow(()->new BaseException(BaseResponseStatus.POST_NO_EXIST));
+
+		CommentEntity comment = new CommentEntity(createCommentDTO, user,post);
+		commentRepository.save(comment);
+
+	}
+
+
+
 }

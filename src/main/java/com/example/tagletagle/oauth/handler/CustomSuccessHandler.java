@@ -48,7 +48,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		response.sendRedirect("http://localhost:3000/");*/
 
 		// Generate JWT token
-		String token = jwtUtil.createJwt(username, userId, role, 60 * 60 * 24 * 1000L);
+		String token = jwtUtil.createJwt("access", username, userId, role, 60 * 60 * 24 * 1000L);
 		System.out.println(token);
 
 		// Determine environment
