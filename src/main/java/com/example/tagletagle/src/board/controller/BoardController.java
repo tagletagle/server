@@ -216,13 +216,13 @@ public class BoardController {
 
 	}
 
-	@Operation(summary = "댓글 작성 api - 윤아", description = "CreateComment에 대한 DTO 넘겨받아 댓글 작성", responses = {
-			@ApiResponse(responseCode = "200", description = "성공"),
-			@ApiResponse(responseCode = "400", description = "파라미터 오류"),
-			@ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다")
-	})
 
 	@PostMapping("/api/board/comment/{post_id}")
+	@Operation(summary = "댓글 작성 api - 윤아", description = "CreateComment에 대한 DTO 넘겨받아 댓글 작성", responses = {
+		@ApiResponse(responseCode = "200", description = "성공"),
+		@ApiResponse(responseCode = "400", description = "파라미터 오류"),
+		@ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다")
+	})
 	public ResponseEntity<BaseResponse<String>> createComment(@Valid @RequestBody CreateCommentDTO createCommentDTO, @PathVariable("post_id")Long postId){
 		try{
 			Long userId = SecurityUtil.getCurrentUserId()
@@ -240,12 +240,20 @@ public class BoardController {
 	}
 
 	@GetMapping("/api/board/search/result")
+	@Operation(summary = "검색 결과 api - 윤재", description = "검색 후 결과 반환", responses = {
+		@ApiResponse(responseCode = "200", description = "성공"),
+
+	})
 	public ResponseEntity<SearchResponseDTO> getSearchResultList(@RequestParam("keyword") String keyword) {
 
 		return ResponseEntity.ok(boardService.getSearchResultList(keyword));
     }
 
 	@GetMapping("/api/board/post/like/list/{post_id}")
+	@Operation(summary = "좋아요 인원 조회 api - 윤재", description = "post_id에 대해 좋아요 누른 사람들 목록 조회", responses = {
+		@ApiResponse(responseCode = "200", description = "성공"),
+
+	})
 	public ResponseEntity<BaseResponse<LikedUsersDTO>> getLikedUsers(@PathVariable("post_id") Long postId) {
 
 		try{
@@ -262,12 +270,12 @@ public class BoardController {
 		}
 	}
 
+	@GetMapping("/api/board/post/new")
 	@Operation(summary = "최신 게시글 조회 api", description = "게시글을 작성 날짜 최신순으로 정렬해 상위 5개를 반환", responses = {
 			@ApiResponse(responseCode = "200", description = "성공"),
 			@ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다"),
 			@ApiResponse(responseCode = "500", description = "게시글이 존재하지 않습니다."),
 	})
-	@GetMapping("/api/board/post/new")
 	public ResponseEntity<BaseResponse<PostsDTO>> getNewPosts(){
 		try{
 			Long userId = SecurityUtil.getCurrentUserId()
