@@ -21,6 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.tagletagle.base.BaseException;
 import com.example.tagletagle.base.BaseResponse;
 import com.example.tagletagle.base.BaseResponseStatus;
+import com.example.tagletagle.src.board.dto.CommentsDTO;
+import com.example.tagletagle.src.board.dto.CreatePostDTO;
+import com.example.tagletagle.src.board.dto.PostsDTO;
 import com.example.tagletagle.src.board.service.BoardService;
 import com.example.tagletagle.src.user.dto.UserBasicInfoDTO;
 import com.example.tagletagle.utils.SecurityUtil;
@@ -49,6 +52,7 @@ public class BoardController {
 		@ApiResponse(responseCode = "400", description = "파라미터 오류"),
 		@ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다")
 	})
+
 	public ResponseEntity<BaseResponse<String>> createPost(@Valid @RequestBody CreatePostDTO createPostDTO){
 		try{
 			Long userId = SecurityUtil.getCurrentUserId()
@@ -197,8 +201,9 @@ public class BoardController {
 		List<BoardResponseDTO> hotPosts = boardService.getHotBoard(likeCount);
 		return ResponseEntity.ok(hotPosts);
 	}
-  
-	@GetMapping("/api/board/search/history")@Operation(summary = "검색 기록 조회 api - 윤아", description = "access Token의 user의 검색 기록을 가져옵니다", responses = {
+
+	@GetMapping("/api/board/search/history")
+	@Operation(summary = "검색 기록 조회 api - 윤아", description = "access Token의 user의 검색 기록을 가져옵니다", responses = {
 		@ApiResponse(responseCode = "200", description = "성공"),
 		@ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다"),
 
@@ -208,6 +213,29 @@ public class BoardController {
 				.orElseThrow(() -> new BaseException(BaseResponseStatus.REQUIRED_LOGIN));
 
 		return boardService.getUserSearchHistory(userId);
+
+	}
+
+	@Operation(summary = "댓글 작성 api - 윤아", description = "CreateComment에 대한 DTO 넘겨받아 댓글 작성", responses = {
+			@ApiResponse(responseCode = "200", description = "성공"),
+			@ApiResponse(responseCode = "400", description = "파라미터 오류"),
+			@ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다")
+	})
+
+	@PostMapping("/api/board/comment/{post_id}")
+	public ResponseEntity<BaseResponse<String>> createComment(@Valid @RequestBody CreateCommentDTO createCommentDTO, @PathVariable("post_id")Long postId){
+		try{
+			Long userId = SecurityUtil.getCurrentUserId()
+					.orElseThrow(() -> new BaseException(BaseResponseStatus.REQUIRED_LOGIN));
+
+			boardService.createComment(userId, postId, createCommentDTO);
+
+			return ResponseEntity.ok(new BaseResponse<>("댓글이 생성되었습니다."));
+
+		}catch (BaseException e){
+			HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+			return ResponseEntity.status(httpStatus).body(new BaseResponse<>(e.getStatus()));
+		}
 
 	}
 
@@ -233,4 +261,27 @@ public class BoardController {
 			return ResponseEntity.status(httpStatus).body(new BaseResponse<>(e.getStatus()));
 		}
 	}
+
+	@Operation(summary = "최신 게시글 조회 api", description = "게시글을 작성 날짜 최신순으로 정렬해 상위 5개를 반환", responses = {
+			@ApiResponse(responseCode = "200", description = "성공"),
+			@ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다"),
+			@ApiResponse(responseCode = "500", description = "게시글이 존재하지 않습니다."),
+	})
+	@GetMapping("/api/board/post/new")
+	public ResponseEntity<BaseResponse<PostsDTO>> getNewPosts(){
+		try{
+			Long userId = SecurityUtil.getCurrentUserId()
+					.orElseThrow(() -> new BaseException(BaseResponseStatus.REQUIRED_LOGIN));
+
+			PostsDTO postsDTO = boardService.getNewPosts(userId);
+
+			return ResponseEntity.ok(new BaseResponse<>(postsDTO));
+
+		}catch (BaseException e){
+			HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+			return ResponseEntity.status(httpStatus).body(new BaseResponse<>(e.getStatus()));
+		}
+
+	}
+
 }

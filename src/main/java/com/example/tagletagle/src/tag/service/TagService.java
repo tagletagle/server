@@ -7,9 +7,11 @@ import com.example.tagletagle.config.Status;
 import com.example.tagletagle.src.board.entity.PostScrapEntity;
 import com.example.tagletagle.src.tag.dto.TagInterestsDTO;
 import com.example.tagletagle.src.tag.entity.TagEntity;
+import com.example.tagletagle.src.tag.entity.TagRequestEntity;
 import com.example.tagletagle.src.tag.entity.UserTagInterests;
 import com.example.tagletagle.src.tag.repository.TagInterestsRepository;
 import com.example.tagletagle.src.tag.repository.TagRepository;
+import com.example.tagletagle.src.tag.repository.TagRequestRepository;
 import com.example.tagletagle.src.tag.dto.TagDTO;
 import com.example.tagletagle.src.user.dto.FollowsDTO;
 import com.example.tagletagle.src.user.entity.FollowsEntity;
@@ -31,6 +33,8 @@ public class TagService {
         private final TagRepository tagRepository;
         private final TagInterestsRepository tagInterestsRepository;
         private final UserRepository userRepository;
+        private final TagRequestRepository tagRequestRepository;
+
         /*stream 사용해서 컬렉션 데이터를 변환
          * map은 요소를 다른 값으로 변환
          * collect 사용하면 스트림 요소 수집해서 컬렉션 생성*/
@@ -62,6 +66,13 @@ public class TagService {
         tagInterestsDTO.setTagId(userTagInterests.getTag().getId());
 
         return  tagInterestsDTO;
+    }
+
+    public void tagRequest(TagDTO tagDTO) {
+
+        TagRequestEntity tagRequest = new TagRequestEntity(tagDTO);
+        tagRequestRepository.save(tagRequest);
+
     }
 
     /**

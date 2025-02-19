@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import com.example.tagletagle.meta.JsoupMetadataService;
 import com.example.tagletagle.meta.SeleniumMetadataService;
 import com.example.tagletagle.src.board.dto.*;
-
+import com.example.tagletagle.src.board.entity.*;
 import com.example.tagletagle.src.board.repository.*;
 import com.example.tagletagle.src.tag.dto.TagDTO;
 import com.example.tagletagle.src.board.dto.SearchResponseDTO;
@@ -52,10 +52,10 @@ public class BoardService {
 	private final JsoupMetadataService jsoupMetadataService;
 	private final SeleniumMetadataService seleniumMetadataService;
 	private final NotificationTempRepository notificationTempRepository;
+	private final CommentRepository commentRepository;
 
 
 	private final SearchHistoryRepository searchHistoryRepository;
-
 
 	@Transactional
 	public void createPost(Long userId, CreatePostDTO createPostDTO) {
@@ -266,7 +266,27 @@ public class BoardService {
 				))
 				.collect(Collectors.toList());    }
 
-  
+
+	public  PostsDTO getNewPosts(Long userId){
+
+		UserEntity user = userRepository.findUserEntityByIdAndStatus(userId, Status.ACTIVE)
+				.orElseThrow(()->new BaseException(BaseResponseStatus.USER_NO_EXIST));
+
+		UserEntity author = userRepository.findUserEntityByIdAndStatus(userId, Status.ACTIVE)
+				.orElseThrow(()->new BaseException(BaseResponseStatus.AUTHOR_NO_EXIST));
+
+		PostsDTO postsDTO = new PostsDTO();
+		List<PostInfoDTO> postInfoDTOList = boardRepository.findNewPosts(userId);
+		if(postInfoDTOList.size() == 0){
+			return postsDTO;
+		}
+
+
+		postsDTO.setPostInfoDTOList(postInfoDTOList);
+
+		return postsDTO;
+	}
+
 	public List<SearchHistoryDTO> getUserSearchHistory(Long userId) {
 		return searchHistoryRepository.findSearchHistoryEntitiesByUser_Id(userId).stream()
 				.map(this:: convertToSearchHistoryDTO)
@@ -314,5 +334,20 @@ public class BoardService {
 
 		return new LikedUsersDTO(likedUsersInfoDTOList);
 	}
+
+	public void createComment(Long userId, Long postId, CreateCommentDTO createCommentDTO) {
+
+		UserEntity user = userRepository.findUserEntityByIdAndStatus(userId, Status.ACTIVE)
+				.orElseThrow(()->new BaseException(BaseResponseStatus.USER_NO_EXIST));
+
+		PostEntity post = postRepository.findPostEntityById(postId)
+				.orElseThrow(()->new BaseException(BaseResponseStatus.POST_NO_EXIST));
+
+		CommentEntity comment = new CommentEntity(createCommentDTO, user,post);
+		commentRepository.save(comment);
+
+	}
+
+
 
 }

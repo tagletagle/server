@@ -1,5 +1,6 @@
 package com.example.tagletagle.src.user.controller;
 
+import org.springframework.web.bind.annotation.*;
 
 import com.example.tagletagle.src.user.dto.UserProfileResponseDTO;
 import com.example.tagletagle.src.user.entity.UserEntity;
