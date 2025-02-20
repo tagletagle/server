@@ -82,6 +82,11 @@ public class NotificationTempRepository {
 	// 게시글 저장 시 알림 생성
 	public void insertNotificationsBySave(Long relatedUserId, Long relatedPostId, List<Long> followerIdList){
 
+		if(followerIdList.size() == 0){
+			System.out.println("팔로워가 없으므로 알림을 생성하지 않습니다");
+			return;
+		}
+
 		String sql = "INSERT INTO notification (related_user_id, related_post_id, notification_type, user_id, is_read) " +
 			"SELECT :relatedUserId, :relatedPostId, :notificationType, id, false FROM user WHERE id IN (:ids)";
 
