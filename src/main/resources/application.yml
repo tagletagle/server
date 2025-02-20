@@ -4,10 +4,10 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: javauser
-    #username: elucidator
-    url: jdbc:mysql://localhost:3306/tagletagle?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul
-    #url: jdbc:mysql://cog-test.c5qeagu0er4r.ap-northeast-2.rds.amazonaws.com:3306/tagletagle?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul
+    #username: javauser
+    username: elucidator
+    #url: jdbc:mysql://localhost:3306/tagletagle?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul
+    url: jdbc:mysql://cog-test.c5qeagu0er4r.ap-northeast-2.rds.amazonaws.com:3306/tagletagle?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=Asia/Seoul
     password: glory510
 
   jpa:
