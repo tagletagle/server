@@ -50,7 +50,7 @@ public class BoardRepository {
 				public PostInfoDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
 					Long postId = rs.getLong("postId");
 					String title = rs.getString("title");
-					String url = rs.getString("title");
+					String url = rs.getString("url");
 					Long commentCount = rs.getLong("commentCount");
 					Long likeCount = rs.getLong("likeCount");
 					Long scrapCount = rs.getLong("scrapCount");
@@ -101,7 +101,7 @@ public class BoardRepository {
 				public PostInfoDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
 					Long postId = rs.getLong("postId");
 					String title = rs.getString("title");
-					String url = rs.getString("title");
+					String url = rs.getString("url");
 					Long commentCount = rs.getLong("commentCount");
 					Long likeCount = rs.getLong("likeCount");
 					Long scrapCount = rs.getLong("scrapCount");
@@ -219,7 +219,7 @@ public class BoardRepository {
 					public PostInfoDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
 						Long postId = rs.getLong("postId");
 						String title = rs.getString("title");
-						String url = rs.getString("title");
+						String url = rs.getString("url");
 						Long commentCount = rs.getLong("commentCount");
 						Long likeCount = rs.getLong("likeCount");
 						Long scrapCount = rs.getLong("scrapCount");
