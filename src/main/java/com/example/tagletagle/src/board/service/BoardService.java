@@ -183,12 +183,14 @@ public class BoardService {
 		if(isUser == Boolean.TRUE){
 			//좋아요가 이미 되어 있으니 해제 로직 작성
 			postLikeRepository.deleteUserAllergy(user, post);
+			post.decreaseLike();
 			comment = "좋아요가 해제 되었습니다";
 
 		}else if(isUser == Boolean.FALSE){
 			//좋아요가 없으니 좋아요 로직 작성
 			PostLikeEntity postLike = new PostLikeEntity(post, user);
 			postLikeRepository.save(postLike);
+			post.increaseLike();
 			comment = "좋아요가 설정 되었습니다";
 		}
 
@@ -209,12 +211,14 @@ public class BoardService {
 		if(isUser == Boolean.TRUE){
 			//스크랩이 이미 되어 있으니 해제 로직 작성
 			postScrapRepository.deletePostScrapEntityByUserAndPost(user, post);
+			post.decreaseScrap();
 			comment = "스크랩이 해제 되었습니다";
 
 		}else if(isUser == Boolean.FALSE){
 			//스크랩이 없으니 좋아요 로직 작성
 			PostScrapEntity postScrap = new PostScrapEntity(post, user);
 			postScrapRepository.save(postScrap);
+			post.increaseScrap();
 			comment = "스크랩이 설정 되었습니다";
 		}
 

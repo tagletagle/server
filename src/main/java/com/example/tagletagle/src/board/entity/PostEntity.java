@@ -57,6 +57,22 @@ public class PostEntity extends BaseEntity {
 	@JoinColumn(name = "user_id")
 	private UserEntity user;
 
+	public void increaseLike(){
+		this.likeCount = this.likeCount + 1;
+	}
+
+	public void decreaseLike(){
+		this.likeCount = this.likeCount - 1;
+	}
+
+	public void increaseScrap(){
+		this.scrapCount = this.scrapCount + 1;
+	}
+
+	public void decreaseScrap(){
+		this.scrapCount = this.scrapCount - 1;
+	}
+
 	public PostEntity(CreatePostDTO createPostDTO, UserEntity user){
 		this.title = createPostDTO.getTitle();
 		this.url = createPostDTO.getUrl();
