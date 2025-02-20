@@ -28,7 +28,7 @@ public class BoardRepository {
 	public List<PostInfoDTO> findPostsByAuthorAndUser(Long authorId, Long userId) {
 
 		String sql = "SELECT p.id AS postId, p.title AS title, p.url AS url, " +
-			"p.comment_count AS commentCount, p.like_count AS likeCount, p.scrap_count AS scrapCount, " +
+			"p.image AS image, p.comment_count AS commentCount, p.like_count AS likeCount, p.scrap_count AS scrapCount, " +
 			"u.id AS authorId, u.nickname AS authorNickname, u.profile_img_url AS authorProfileImgUrl, " +
 			"pl.id AS isLike, ps.id AS isScrap, " +
 			"GROUP_CONCAT(DISTINCT t.id SEPARATOR ', ') AS tagIds, " +
@@ -51,6 +51,7 @@ public class BoardRepository {
 					Long postId = rs.getLong("postId");
 					String title = rs.getString("title");
 					String url = rs.getString("url");
+					String imageUrl = rs.getString("image");
 					Long commentCount = rs.getLong("commentCount");
 					Long likeCount = rs.getLong("likeCount");
 					Long scrapCount = rs.getLong("scrapCount");
@@ -65,7 +66,7 @@ public class BoardRepository {
 					System.out.println("isLike :" + isLike);
 					System.out.println("isScrap :" + isScrap);
 
-					return new PostInfoDTO(postId, title, url, commentCount, likeCount, scrapCount, authorId, authorNickname, authorProfileImgUrl, isLike, isScrap,tagIds, tagNames);
+					return new PostInfoDTO(postId, title, url, imageUrl,commentCount, likeCount, scrapCount, authorId, authorNickname, authorProfileImgUrl, isLike, isScrap,tagIds, tagNames);
 				}
 			},
 			userId, userId, authorId
@@ -79,7 +80,7 @@ public class BoardRepository {
 	public List<PostInfoDTO> findPostsByAuthorAndUserWithTag(Long authorId, Long userId, Long tagId) {
 
 		String sql = "SELECT p.id AS postId, p.title AS title, p.url AS url, " +
-			"p.comment_count AS commentCount, p.like_count AS likeCount, p.scrap_count AS scrapCount, " +
+			"p.image AS image, p.comment_count AS commentCount, p.like_count AS likeCount, p.scrap_count AS scrapCount, " +
 			"u.id AS authorId, u.nickname AS authorNickname, u.profile_img_url AS authorProfileImgUrl, " +
 			"pl.id AS isLike, ps.id AS isScrap, " +
 			"GROUP_CONCAT(DISTINCT t.id SEPARATOR ', ') AS tagIds, " +
@@ -102,6 +103,7 @@ public class BoardRepository {
 					Long postId = rs.getLong("postId");
 					String title = rs.getString("title");
 					String url = rs.getString("url");
+					String imageUrl = rs.getString("image");
 					Long commentCount = rs.getLong("commentCount");
 					Long likeCount = rs.getLong("likeCount");
 					Long scrapCount = rs.getLong("scrapCount");
@@ -113,7 +115,7 @@ public class BoardRepository {
 					String tagIds = rs.getString("tagIds");
 					String tagNames = rs.getString("tagNames");
 
-					return new PostInfoDTO(postId, title, url, commentCount, likeCount, scrapCount, authorId, authorNickname, authorProfileImgUrl, isLike, isScrap,tagIds, tagNames);
+					return new PostInfoDTO(postId, title, url, imageUrl, commentCount, likeCount, scrapCount, authorId, authorNickname, authorProfileImgUrl, isLike, isScrap,tagIds, tagNames);
 				}
 			},
 			userId, userId, authorId, tagId
@@ -198,7 +200,7 @@ public class BoardRepository {
 	public List<PostInfoDTO> findNewPosts(Long userId) {
 
 		String sql ="SELECT p.id AS postId, p.title AS title, p.url AS url, " +
-				"p.comment_count AS commentCount, p.like_count AS likeCount, p.scrap_count AS scrapCount, " +
+				"p.image AS image, p.comment_count AS commentCount, p.like_count AS likeCount, p.scrap_count AS scrapCount, " +
 				"u.id AS authorId, u.nickname AS authorNickname, u.profile_img_url AS authorProfileImgUrl, " +
 				"pl.id AS isLike, ps.id AS isScrap, " +
 				"GROUP_CONCAT(DISTINCT t.id SEPARATOR ', ') AS tagIds, " +
@@ -220,6 +222,7 @@ public class BoardRepository {
 						Long postId = rs.getLong("postId");
 						String title = rs.getString("title");
 						String url = rs.getString("url");
+						String imageUrl = rs.getString("image");
 						Long commentCount = rs.getLong("commentCount");
 						Long likeCount = rs.getLong("likeCount");
 						Long scrapCount = rs.getLong("scrapCount");
@@ -231,7 +234,7 @@ public class BoardRepository {
 						String tagIds = rs.getString("tagIds");
 						String tagNames = rs.getString("tagNames");
 
-						return new PostInfoDTO(postId, title, url, commentCount, likeCount, scrapCount, authorId, authorNickname, authorProfileImgUrl, isLike, isScrap,tagIds, tagNames);
+						return new PostInfoDTO(postId, title, url, imageUrl, commentCount, likeCount, scrapCount, authorId, authorNickname, authorProfileImgUrl, isLike, isScrap,tagIds, tagNames);
 					}
 				}, userId,userId
 		);
