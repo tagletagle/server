@@ -352,6 +352,22 @@ public class BoardService {
 
 	}
 
+	public PostsDTO getHotBoard2(Long userId, Long likeCount) {
 
+		UserEntity user = userRepository.findUserEntityByIdAndStatus(userId, Status.ACTIVE)
+			.orElseThrow(()->new BaseException(BaseResponseStatus.USER_NO_EXIST));
 
+		PostsDTO postsDTO = new PostsDTO();
+		System.out.println("getHotBoard2 진입");
+
+		List<PostInfoDTO> postInfoDTOList = boardRepository.findHotPostsByLikeCount(userId, likeCount);
+
+		if(postInfoDTOList.size() == 0){
+			return postsDTO;
+		}
+		postsDTO.setPostInfoDTOList(postInfoDTOList);
+
+		return postsDTO;
+
+	}
 }

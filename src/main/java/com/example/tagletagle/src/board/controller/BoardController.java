@@ -190,6 +190,7 @@ public class BoardController {
 	}
 
 
+/*
 	@GetMapping("/api/board/hot")
 	@Operation(summary = "핫 게시글 조회 api - 윤재", description = "좋아요가 많은 게시글 리스트 조회", responses = {
 		@ApiResponse(responseCode = "200", description = "성공"),
@@ -201,6 +202,29 @@ public class BoardController {
 		List<BoardResponseDTO> hotPosts = boardService.getHotBoard(likeCount);
 		return ResponseEntity.ok(hotPosts);
 	}
+*/
+
+	@GetMapping("/api/board/hot")
+	@Operation(summary = "핫 게시글 조회 api - 윤재", description = "좋아요가 많은 게시글 리스트 조회", responses = {
+		@ApiResponse(responseCode = "200", description = "성공"),
+
+	})
+	public ResponseEntity<BaseResponse<PostsDTO>> getHotBoard(
+		@RequestParam(required = false, defaultValue = "5") Long likeCount
+	){
+		try{
+			Long userId = SecurityUtil.getCurrentUserId()
+				.orElseThrow(() -> new BaseException(BaseResponseStatus.REQUIRED_LOGIN));
+
+			PostsDTO hotPosts = boardService.getHotBoard2(userId, likeCount);
+			return ResponseEntity.ok(new BaseResponse<>(hotPosts));
+		}catch (BaseException e){
+			HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+			return ResponseEntity.status(httpStatus).body(new BaseResponse<>(e.getStatus()));
+		}
+	}
+
+
 
 	@GetMapping("/api/board/search/history")
 	@Operation(summary = "검색 기록 조회 api - 윤아", description = "access Token의 user의 검색 기록을 가져옵니다", responses = {
