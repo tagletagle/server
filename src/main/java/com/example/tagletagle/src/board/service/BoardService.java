@@ -127,7 +127,7 @@ public class BoardService {
 	}
 
 
-	public PostsDTO getPostsByUser(Long userId, Long authorId) {
+	public PostsDTO getPostsByUser(Long userId, Long authorId) throws BaseException{
 
 		UserEntity user = userRepository.findUserEntityByIdAndStatus(userId, Status.ACTIVE)
 			.orElseThrow(()->new BaseException(BaseResponseStatus.USER_NO_EXIST));

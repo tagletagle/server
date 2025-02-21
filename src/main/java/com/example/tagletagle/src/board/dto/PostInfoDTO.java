@@ -1,8 +1,10 @@
 package com.example.tagletagle.src.board.dto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.example.tagletagle.utils.TagUtils;
+import com.example.tagletagle.utils.TimeUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.ColumnResult;
@@ -34,10 +36,12 @@ public class PostInfoDTO {
 	private Boolean isLike;
 	private Boolean isScrap;
 
+	private String timeInfo;
+
 	private List<TagInfoDTO> tagInfoDTOList;
 
 	public PostInfoDTO(Long postId, String title, String url, String imageUrl,Long commentCount, Long likeCount, Long scrapCount,
-		Long authorId, String authorNickname, String authorProfileImgUrl, Long isLike, Long isScrap, String tagIds, String tagNames) {
+		Long authorId, String authorNickname, String authorProfileImgUrl, Long isLike, Long isScrap, LocalDateTime createdAt, String tagIds, String tagNames) {
 		this.postId = postId;
 		this.title = title;
 		this.url = url;
@@ -52,6 +56,7 @@ public class PostInfoDTO {
 		this.isLike = (isLike == null || isLike == 0) ? Boolean.FALSE : Boolean.TRUE;
 		System.out.println(isScrap);
 		this.isScrap = (isScrap == null || isScrap == 0) ? Boolean.FALSE : Boolean.TRUE;
+		this.timeInfo = TimeUtil.getTimeLine(createdAt);
 		this.tagInfoDTOList = TagUtils.parseTags(tagIds, tagNames);
 	}
 }

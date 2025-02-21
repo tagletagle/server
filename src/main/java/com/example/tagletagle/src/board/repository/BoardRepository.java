@@ -2,6 +2,7 @@ package com.example.tagletagle.src.board.repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -28,7 +29,7 @@ public class BoardRepository {
 	public List<PostInfoDTO> findPostsByAuthorAndUser(Long authorId, Long userId) {
 
 		String sql = "SELECT p.id AS postId, p.title AS title, p.url AS url, " +
-			"p.image AS image, p.comment_count AS commentCount, p.like_count AS likeCount, p.scrap_count AS scrapCount, " +
+			"p.image AS image, p.comment_count AS commentCount, p.like_count AS likeCount, p.scrap_count AS scrapCount, p.created_at AS createdAt, " +
 			"u.id AS authorId, u.nickname AS authorNickname, u.profile_img_url AS authorProfileImgUrl, " +
 			"pl.id AS isLike, ps.id AS isScrap, " +
 			"GROUP_CONCAT(DISTINCT t.id SEPARATOR ', ') AS tagIds, " +
@@ -60,13 +61,15 @@ public class BoardRepository {
 					String authorProfileImgUrl = rs.getString("authorProfileImgUrl");
 					Long isLike = rs.getLong("isLike");
 					Long isScrap = rs.getLong("isScrap");
+					LocalDateTime createdAt = rs.getTimestamp("createdAt").toLocalDateTime();
+
 					String tagIds = rs.getString("tagIds");
 					String tagNames = rs.getString("tagNames");
 
 					System.out.println("isLike :" + isLike);
 					System.out.println("isScrap :" + isScrap);
 
-					return new PostInfoDTO(postId, title, url, imageUrl,commentCount, likeCount, scrapCount, authorId, authorNickname, authorProfileImgUrl, isLike, isScrap,tagIds, tagNames);
+					return new PostInfoDTO(postId, title, url, imageUrl,commentCount, likeCount, scrapCount, authorId, authorNickname, authorProfileImgUrl, isLike, isScrap , createdAt , tagIds, tagNames);
 				}
 			},
 			userId, userId, authorId
@@ -80,7 +83,7 @@ public class BoardRepository {
 	public List<PostInfoDTO> findPostsByAuthorAndUserWithTag(Long authorId, Long userId, Long tagId) {
 
 		String sql = "SELECT p.id AS postId, p.title AS title, p.url AS url, " +
-			"p.image AS image, p.comment_count AS commentCount, p.like_count AS likeCount, p.scrap_count AS scrapCount, " +
+			"p.image AS image, p.comment_count AS commentCount, p.like_count AS likeCount, p.scrap_count AS scrapCount, p.created_at AS createdAt, " +
 			"u.id AS authorId, u.nickname AS authorNickname, u.profile_img_url AS authorProfileImgUrl, " +
 			"pl.id AS isLike, ps.id AS isScrap, " +
 			"GROUP_CONCAT(DISTINCT t.id SEPARATOR ', ') AS tagIds, " +
@@ -112,10 +115,11 @@ public class BoardRepository {
 					String authorProfileImgUrl = rs.getString("authorProfileImgUrl");
 					Long isLike = rs.getLong("isLike");
 					Long isScrap = rs.getLong("isScrap");
+					LocalDateTime createdAt = rs.getTimestamp("createdAt").toLocalDateTime();
 					String tagIds = rs.getString("tagIds");
 					String tagNames = rs.getString("tagNames");
 
-					return new PostInfoDTO(postId, title, url, imageUrl, commentCount, likeCount, scrapCount, authorId, authorNickname, authorProfileImgUrl, isLike, isScrap,tagIds, tagNames);
+					return new PostInfoDTO(postId, title, url, imageUrl, commentCount, likeCount, scrapCount, authorId, authorNickname, authorProfileImgUrl, isLike, isScrap , createdAt ,tagIds, tagNames);
 				}
 			},
 			userId, userId, authorId, tagId
@@ -200,7 +204,7 @@ public class BoardRepository {
 	public List<PostInfoDTO> findNewPosts(Long userId) {
 
 		String sql ="SELECT p.id AS postId, p.title AS title, p.url AS url, " +
-				"p.image AS image, p.comment_count AS commentCount, p.like_count AS likeCount, p.scrap_count AS scrapCount, " +
+				"p.image AS image, p.comment_count AS commentCount, p.like_count AS likeCount, p.scrap_count AS scrapCount, p.created_at AS createdAt, " +
 				"u.id AS authorId, u.nickname AS authorNickname, u.profile_img_url AS authorProfileImgUrl, " +
 				"pl.id AS isLike, ps.id AS isScrap, " +
 				"GROUP_CONCAT(DISTINCT t.id SEPARATOR ', ') AS tagIds, " +
@@ -231,10 +235,11 @@ public class BoardRepository {
 						String authorProfileImgUrl = rs.getString("authorProfileImgUrl");
 						Long isLike = rs.getLong("isLike");
 						Long isScrap = rs.getLong("isScrap");
+						LocalDateTime createdAt = rs.getTimestamp("createdAt").toLocalDateTime();
 						String tagIds = rs.getString("tagIds");
 						String tagNames = rs.getString("tagNames");
 
-						return new PostInfoDTO(postId, title, url, imageUrl, commentCount, likeCount, scrapCount, authorId, authorNickname, authorProfileImgUrl, isLike, isScrap,tagIds, tagNames);
+						return new PostInfoDTO(postId, title, url, imageUrl, commentCount, likeCount, scrapCount, authorId, authorNickname, authorProfileImgUrl, isLike, isScrap, createdAt ,tagIds, tagNames);
 					}
 				}, userId,userId
 		);
@@ -244,7 +249,7 @@ public class BoardRepository {
 	public List<PostInfoDTO> findHotPostsByLikeCount(Long userId, Long likeCount) {
 
 		String sql = "SELECT p.id AS postId, p.title AS title, p.url AS url, " +
-			"p.image AS image, p.comment_count AS commentCount, p.like_count AS likeCount, p.scrap_count AS scrapCount, " +
+			"p.image AS image, p.comment_count AS commentCount, p.like_count AS likeCount, p.scrap_count AS scrapCount, p.created_at AS createdAt, " +
 			"u.id AS authorId, u.nickname AS authorNickname, u.profile_img_url AS authorProfileImgUrl, " +
 			"pl.id AS isLike, ps.id AS isScrap, " +
 			"GROUP_CONCAT(DISTINCT t.id SEPARATOR ', ') AS tagIds, " +
@@ -280,13 +285,14 @@ public class BoardRepository {
 					String authorProfileImgUrl = rs.getString("authorProfileImgUrl");
 					Long isLike = rs.getLong("isLike");
 					Long isScrap = rs.getLong("isScrap");
+					LocalDateTime createdAt = rs.getTimestamp("createdAt").toLocalDateTime();
 					String tagIds = rs.getString("tagIds");
 					String tagNames = rs.getString("tagNames");
 
 					System.out.println("isLike :" + isLike);
 					System.out.println("isScrap :" + isScrap);
 
-					return new PostInfoDTO(postId, title, url, imageUrl,commentCount, likeCount, scrapCount, authorId, authorNickname, authorProfileImgUrl, isLike, isScrap,tagIds, tagNames);
+					return new PostInfoDTO(postId, title, url, imageUrl,commentCount, likeCount, scrapCount, authorId, authorNickname, authorProfileImgUrl, isLike, isScrap, createdAt,tagIds, tagNames);
 				}
 			},
 			userId, userId, likeCount
