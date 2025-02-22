@@ -71,14 +71,10 @@ public class BoardService {
 			Map<String, String> metadata = future.join();
 
 			if(createPostDTO.getTitle() == null){
-				post = new PostEntity(createPostDTO, user, metadata.get("title"), metadata.get("image"), metadata.get("author") );
+				post = new PostEntity(createPostDTO, user, metadata.get("title"), metadata.get("image"));
 			}else{
-				post = new PostEntity(createPostDTO, user, metadata.get("image"), metadata.get("author") );
+				post = new PostEntity(createPostDTO, user, metadata.get("image") );
 			}
-
-			System.out.println("1111111" + metadata.get("title"));
-			System.out.println("222222" + metadata.get("image"));
-			System.out.println("333333" + metadata.get("author"));
 
 		}
 		else{
@@ -86,17 +82,10 @@ public class BoardService {
 
 
 			if(createPostDTO.getTitle() == null || createPostDTO.getTitle().isBlank()){
-				System.out.println("진입!!!!");
-				post = new PostEntity(createPostDTO, user, metadata.get("title"), metadata.get("image"), metadata.get("author") );
+				post = new PostEntity(createPostDTO, user, metadata.get("title"), metadata.get("image") );
 			}else{
-				post = new PostEntity(createPostDTO, user, metadata.get("image"), metadata.get("author") );
+				post = new PostEntity(createPostDTO, user, metadata.get("image") );
 			}
-
-			System.out.println("1111111" + metadata.get("title"));
-			System.out.println("222222" + metadata.get("image"));
-			System.out.println("333333" + metadata.get("author"));
-
-
 		}
 
 

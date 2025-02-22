@@ -32,14 +32,14 @@ public class PostEntity extends BaseEntity {
 	@Column(name = "id")
 	private Long id;
 
-	@Column
+	@Column(columnDefinition = "TEXT")
 	private String title;
 
 	@Column
 	private String url;
 
-	@Column
-	private String author;
+	@Column(columnDefinition = "TEXT")
+	private String contents;
 
 	@Column(columnDefinition = "TEXT")
 	private String image;
@@ -76,28 +76,29 @@ public class PostEntity extends BaseEntity {
 	public PostEntity(CreatePostDTO createPostDTO, UserEntity user){
 		this.title = createPostDTO.getTitle();
 		this.url = createPostDTO.getUrl();
+		this.contents = createPostDTO.getContents();
 		this.commentCount = 0L;
 		this.likeCount = 0L;
 		this.scrapCount = 0L;
 		this.user = user;
 	}
 
-	public PostEntity(CreatePostDTO createPostDTO, UserEntity user, String title ,String image, String author){
+	public PostEntity(CreatePostDTO createPostDTO, UserEntity user, String title ,String image){
 		this.title = title;
 		this.url = createPostDTO.getUrl();
+		this.contents = createPostDTO.getContents();
 		this.image = image;
-		this.author = author;
 		this.commentCount = 0L;
 		this.likeCount = 0L;
 		this.scrapCount = 0L;
 		this.user = user;
 	}
 
-	public PostEntity(CreatePostDTO createPostDTO, UserEntity user, String image, String author){
+	public PostEntity(CreatePostDTO createPostDTO, UserEntity user, String image){
 		this.title = createPostDTO.getTitle();
 		this.url = createPostDTO.getUrl();
+		this.contents = createPostDTO.getContents();
 		this.image = image;
-		this.author = author;
 		this.commentCount = 0L;
 		this.likeCount = 0L;
 		this.scrapCount = 0L;
