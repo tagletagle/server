@@ -98,7 +98,9 @@ public class JWTFilter extends OncePerRequestFilter {
 		}catch (io.jsonwebtoken.ExpiredJwtException e){
 			System.out.println("token expired");
 			//filterChain.doFilter(request, response);
-			ResponseUtil.handleException(response, HttpServletResponse.SC_UNAUTHORIZED ,new BaseException(BaseResponseStatus.EXPIRED_ACCESS_TOKEN));
+			//ResponseUtil.handleException(response, HttpServletResponse.SC_UNAUTHORIZED ,new BaseException(BaseResponseStatus.EXPIRED_ACCESS_TOKEN));
+			ResponseUtil.handleException(response, HttpServletResponse.SC_PAYMENT_REQUIRED ,new BaseException(BaseResponseStatus.EXPIRED_ACCESS_TOKEN));
+
 			//조건이 해당되면 메소드 종료 (필수)
 			return;
 

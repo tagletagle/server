@@ -29,7 +29,7 @@ public enum BaseResponseStatus {
 	INVALID_ACCESS_TOKEN(false,2300, "access 토큰이 올바르지 않습니다"),
 	INVALID_REFRESH_TOKEN(false,2301, "refresh 토큰이 올바르지 않습니다"),
 	EXPIRED_ACCESS_TOKEN(false, 2310, "access 토큰 시간이 만료되었습니다"),
-	EXPIRED_REFRESH_TOKEN(false, 2311, "access 토큰 시간이 만료되었습니다"),
+	EXPIRED_REFRESH_TOKEN(false, 2311, "refresh 토큰 시간이 만료되었습니다"),
 	NO_BEARER_FORM(false, 2320, "Beraer 형식이 아닙니다"),
 
 
