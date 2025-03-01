@@ -1,8 +1,10 @@
 package com.example.tagletagle.src.board.dto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.example.tagletagle.utils.TagUtils;
+import com.example.tagletagle.utils.TimeUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.ColumnResult;
@@ -22,6 +24,8 @@ public class PostInfoDTO {
 	private Long postId;
 	private String title;
 	private String url;
+	private String contents;
+	private String imageUrl;
 	private Long commentCount;
 	private Long likeCount;
 	private Long scrapCount;
@@ -33,13 +37,17 @@ public class PostInfoDTO {
 	private Boolean isLike;
 	private Boolean isScrap;
 
+	private String timeInfo;
+
 	private List<TagInfoDTO> tagInfoDTOList;
 
-	public PostInfoDTO(Long postId, String title, String url, Long commentCount, Long likeCount, Long scrapCount,
-		Long authorId, String authorNickname, String authorProfileImgUrl, Long isLike, Long isScrap, String tagIds, String tagNames) {
+	public PostInfoDTO(Long postId, String title, String url, String contents, String imageUrl,Long commentCount, Long likeCount, Long scrapCount,
+		Long authorId, String authorNickname, String authorProfileImgUrl, Long isLike, Long isScrap, LocalDateTime createdAt, String tagIds, String tagNames) {
 		this.postId = postId;
 		this.title = title;
 		this.url = url;
+		this.contents = contents;
+		this.imageUrl = imageUrl;
 		this.commentCount = commentCount;
 		this.likeCount = likeCount;
 		this.scrapCount = scrapCount;
@@ -50,6 +58,7 @@ public class PostInfoDTO {
 		this.isLike = (isLike == null || isLike == 0) ? Boolean.FALSE : Boolean.TRUE;
 		System.out.println(isScrap);
 		this.isScrap = (isScrap == null || isScrap == 0) ? Boolean.FALSE : Boolean.TRUE;
+		this.timeInfo = TimeUtil.getTimeLine(createdAt);
 		this.tagInfoDTOList = TagUtils.parseTags(tagIds, tagNames);
 	}
 }

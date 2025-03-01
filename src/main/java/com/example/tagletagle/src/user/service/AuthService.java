@@ -64,13 +64,19 @@ public class AuthService {
 		Long userId = jwtUtil.getUserId(refresh);
 		String role = jwtUtil.getRole(refresh);
 		// 1일
-		String newAccess = jwtUtil.createJwt("access", username,userId, role, 24*60*60*1000L);
+		// String newAccess = jwtUtil.createJwt("access", username,userId, role, 24*60*60*1000L);
+		String newAccess = jwtUtil.createJwt("access", username,userId, role, 10*60*1000L);
+
 		// 7일
-		String newRefresh = jwtUtil.createJwt("refresh", username, userId, role, 7*24*60*60*1000L);
+		//String newRefresh = jwtUtil.createJwt("refresh", username, userId, role, 7*24*60*60*1000L);
+		String newRefresh = jwtUtil.createJwt("refresh", username, userId, role, 20*60*1000L);
+
 
 		// DB에 기존 refresh 토큰 삭제 후, 새 refresh 토큰 저장
 		refreshRepository.deleteByRefresh(refresh);
-		addRefreshEntity(username, newRefresh, 7*24*60*60*1000L);
+		addRefreshEntity(username, newRefresh, 20*60*1000L);
+
+		//addRefreshEntity(username, newRefresh, 7*24*60*60*1000L);
 
 		return new TokenResponseDTO("Bearer " + newAccess, "Bearer " + newRefresh);
 

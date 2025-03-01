@@ -35,6 +35,9 @@ public class TagController {
 
     //최근 사용한 태그 목록 불러오기
     @GetMapping("/api/user/tag/recent")
+    @Operation(summary = "최근 사용한 태그 목록 불러오기 api - 윤재", description = "최근 사용한 태그 목록을 조회합니다", responses = {
+        @ApiResponse(responseCode = "200", description = "성공"),
+    })
     public ResponseEntity<List<TagDTO>> getRecentTags(){
         List<TagDTO> recentTags = tagService.getRecentTags();
         return ResponseEntity.ok(recentTags);
@@ -98,6 +101,10 @@ public class TagController {
 
     //사용자 관심태그 수정
     @PatchMapping("api/user/tag/modify")
+    @Operation(summary = "사용자 관심태그 수정 api - 윤재", description = "토큰으로 받은 유저의 관심태그 목록을 수정합니다", responses = {
+        @ApiResponse(responseCode = "200", description = "성공"),
+        @ApiResponse(responseCode = "500", description = "로그인이 필요한 서비스 입니다")
+    })
     public ResponseEntity<BaseResponse<String>> registerOrDelete(@RequestBody TagResponseDTO requestTags) {
 
         Long userId = SecurityUtil.getCurrentUserId()

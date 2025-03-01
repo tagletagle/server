@@ -50,6 +50,13 @@ public class AuthController {
 			TokenResponseDTO tokenResponseDTO = authService.reissue(refreshTokenRequestDTO);
 			return ResponseEntity.ok(new BaseResponse<>(tokenResponseDTO));
 		}catch (BaseException e) {
+
+			// 임시로 refreshToken 만료 시 처리 하는 코드
+			if(e.getStatus().getCode() == 2311){
+				HttpStatus httpStatus = HttpStatus.PAYMENT_REQUIRED;
+				return ResponseEntity.status(httpStatus).body(new BaseResponse<>(e.getStatus()));
+			}
+
 			HttpStatus httpStatus = HttpStatus.UNAUTHORIZED;
 			return ResponseEntity.status(httpStatus).body(new BaseResponse<>(e.getStatus()));
 		}
@@ -68,6 +75,12 @@ public class AuthController {
 			authService.logout(refreshTokenRequestDTO);
 			return ResponseEntity.ok(new BaseResponse<>("로그아웃에 성공했습니다"));
 		}catch (BaseException e){
+			// 임시로 refreshToken 만료 시 처리 하는 코드
+			if(e.getStatus().getCode() == 2311){
+				HttpStatus httpStatus = HttpStatus.PAYMENT_REQUIRED;
+				return ResponseEntity.status(httpStatus).body(new BaseResponse<>(e.getStatus()));
+			}
+
 			HttpStatus httpStatus = HttpStatus.UNAUTHORIZED;
 			return ResponseEntity.status(httpStatus).body(new BaseResponse<>(e.getStatus()));
 		}

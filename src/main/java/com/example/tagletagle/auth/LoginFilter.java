@@ -99,11 +99,16 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 		Long userId = customUserDetails.getUserId();
 
 		// 1일
-		String accessToken = jwtUtil.createJwt("access", username, userId, role, 24*60*60*1000L);
-		// 7일
-		String refreshToken = jwtUtil.createJwt("refresh", username, userId, role, 7*24*60*60*1000L );
+		// String accessToken = jwtUtil.createJwt("access", username, userId, role, 24*60*60*1000L);
+		String accessToken = jwtUtil.createJwt("access", username, userId, role, 10*60*1000L);
 
-		addRefreshEntity(username, refreshToken, 7*24*60*60*1000L);
+		// 7일
+		// String refreshToken = jwtUtil.createJwt("refresh", username, userId, role, 7*24*60*60*1000L );
+		String refreshToken = jwtUtil.createJwt("refresh", username, userId, role, 20*60*1000L );
+
+		//addRefreshEntity(username, refreshToken, 7*24*60*60*1000L);
+		addRefreshEntity(username, refreshToken, 20*60*1000L);
+
 
 		response.addHeader("access", "Bearer " + accessToken);
 		response.addHeader("refresh", "Bearer " + refreshToken);

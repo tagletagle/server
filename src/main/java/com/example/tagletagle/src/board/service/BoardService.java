@@ -71,14 +71,10 @@ public class BoardService {
 			Map<String, String> metadata = future.join();
 
 			if(createPostDTO.getTitle() == null){
-				post = new PostEntity(createPostDTO, user, metadata.get("title"), metadata.get("image"), metadata.get("author") );
+				post = new PostEntity(createPostDTO, user, metadata.get("title"), metadata.get("image"));
 			}else{
-				post = new PostEntity(createPostDTO, user, metadata.get("image"), metadata.get("author") );
+				post = new PostEntity(createPostDTO, user, metadata.get("image") );
 			}
-
-			System.out.println("1111111" + metadata.get("title"));
-			System.out.println("222222" + metadata.get("image"));
-			System.out.println("333333" + metadata.get("author"));
 
 		}
 		else{
@@ -86,17 +82,10 @@ public class BoardService {
 
 
 			if(createPostDTO.getTitle() == null || createPostDTO.getTitle().isBlank()){
-				System.out.println("진입!!!!");
-				post = new PostEntity(createPostDTO, user, metadata.get("title"), metadata.get("image"), metadata.get("author") );
+				post = new PostEntity(createPostDTO, user, metadata.get("title"), metadata.get("image") );
 			}else{
-				post = new PostEntity(createPostDTO, user, metadata.get("image"), metadata.get("author") );
+				post = new PostEntity(createPostDTO, user, metadata.get("image") );
 			}
-
-			System.out.println("1111111" + metadata.get("title"));
-			System.out.println("222222" + metadata.get("image"));
-			System.out.println("333333" + metadata.get("author"));
-
-
 		}
 
 
@@ -127,7 +116,7 @@ public class BoardService {
 	}
 
 
-	public PostsDTO getPostsByUser(Long userId, Long authorId) {
+	public PostsDTO getPostsByUser(Long userId, Long authorId) throws BaseException{
 
 		UserEntity user = userRepository.findUserEntityByIdAndStatus(userId, Status.ACTIVE)
 			.orElseThrow(()->new BaseException(BaseResponseStatus.USER_NO_EXIST));
@@ -183,12 +172,14 @@ public class BoardService {
 		if(isUser == Boolean.TRUE){
 			//좋아요가 이미 되어 있으니 해제 로직 작성
 			postLikeRepository.deleteUserAllergy(user, post);
+			post.decreaseLike();
 			comment = "좋아요가 해제 되었습니다";
 
 		}else if(isUser == Boolean.FALSE){
 			//좋아요가 없으니 좋아요 로직 작성
 			PostLikeEntity postLike = new PostLikeEntity(post, user);
 			postLikeRepository.save(postLike);
+			post.increaseLike();
 			comment = "좋아요가 설정 되었습니다";
 		}
 
@@ -209,12 +200,14 @@ public class BoardService {
 		if(isUser == Boolean.TRUE){
 			//스크랩이 이미 되어 있으니 해제 로직 작성
 			postScrapRepository.deletePostScrapEntityByUserAndPost(user, post);
+			post.decreaseScrap();
 			comment = "스크랩이 해제 되었습니다";
 
 		}else if(isUser == Boolean.FALSE){
 			//스크랩이 없으니 좋아요 로직 작성
 			PostScrapEntity postScrap = new PostScrapEntity(post, user);
 			postScrapRepository.save(postScrap);
+			post.increaseScrap();
 			comment = "스크랩이 설정 되었습니다";
 		}
 
@@ -348,6 +341,22 @@ public class BoardService {
 
 	}
 
+	public PostsDTO getHotBoard2(Long userId, Long likeCount) {
 
+		UserEntity user = userRepository.findUserEntityByIdAndStatus(userId, Status.ACTIVE)
+			.orElseThrow(()->new BaseException(BaseResponseStatus.USER_NO_EXIST));
 
+		PostsDTO postsDTO = new PostsDTO();
+		System.out.println("getHotBoard2 진입");
+
+		List<PostInfoDTO> postInfoDTOList = boardRepository.findHotPostsByLikeCount(userId, likeCount);
+
+		if(postInfoDTOList.size() == 0){
+			return postsDTO;
+		}
+		postsDTO.setPostInfoDTOList(postInfoDTOList);
+
+		return postsDTO;
+
+	}
 }
